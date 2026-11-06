@@ -1,0 +1,278 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("CONSUMER") // CONSUMER, RESTAURANT_OWNER, INSPECTOR, ADMIN
+  phone        String?
+  city         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurants          Restaurant[]          @relation("OwnerRestaurants")
+  inspectionsConducted Inspection[]          @relation("InspectorInspections")
+  documentsUploaded    Document[]            @relation("UploaderDocuments")
+  documentsVerified    Document[]            @relation("VerifierDocuments")
+  verificationReviews  VerificationRequest[] @relation("ReviewerVerificationRequests")
+  verificationRequests VerificationRequest[] @relation("RequesterVerificationRequests")
+  consumerReports      ConsumerReport[]      @relation("ReporterReports")
+  savedRestaurants     SavedRestaurant[]     @relation("UserSavedRestaurants")
+  notifications        Notification[]        @relation("UserNotifications")
+  auditLogs            AuditLog[]            @relation("ActorAuditLogs")
+}
+
+model Restaurant {
+  id                   String    @id @default(cuid())
+  name                 String
+  slug                 String    @unique
+  legalName            String?
+  fssaiNumber          String?
+  fssaiType            String?   // REGISTRATION, STATE_LICENSE, CENTRAL_LICENSE
+  fssaiValidUntil      DateTime?
+  cuisine              String
+  streetAddress        String
+  locality             String
+  city                 String
+  state                String    @default("Delhi")
+  postalCode           String?
+  phone                String?
+  email                String?
+  foodRating           Float?    // External consumer platform food rating (e.g., 4.3)
+  totalReviews         Int       @default(0)
+  safetyScore          Int       @default(0) // 0-100 calculated transparent score
+  dataConfidenceScore  Int       @default(0) // 0-100 completeness & recency of verified data
+  verificationStatus   String    @default("UNVERIFIED") // UNVERIFIED, PENDING_REVIEW, VERIFIED, EXPIRED, ACTION_REQUIRED
+  lastInspectedAt      DateTime?
+  coverImageUrl        String?
+  isDemoData           Boolean   @default(true) // Clearly marks demonstration data
+  ownerId              String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  owner                User?                 @relation("OwnerRestaurants", fields: [ownerId], references: [id])
+  kitchenProfile       KitchenProfile?
+  documents            Document[]
+  inspections          Inspection[]
+  safetyAssessments    SafetyAssessment[]
+  scoreHistory         ScoreHistory[]
+  verificationRequests VerificationRequest[]
+  consumerReports      ConsumerReport[]
+  savedByUsers         SavedRestaurant[]
+
+  @@index([city, locality])
+  @@index([verificationStatus])
+  @@index([safetyScore])
+}
+
+model KitchenProfile {
+  id                   String   @id @default(cuid())
+  restaurantId         String   @unique
+  kitchenType          String   // DINE_IN, CLOUD_KITCHEN, QUICK_SERVICE, BAKERY, SWEETS
+  squareFootage        Int?
+  foodHandlersCount    Int      @default(1)
+  fostacSupervisorName String?
+  fostacCertNumber     String?
+  waterSource          String?  // MUNICIPAL_TESTED, COMMERCIAL_RO, BOREWELL_PURIFIED
+  pestControlAgency    String?
+  lastPestControlDate  DateTime?
+  oilDisposalMethod    String?  // AUTHORIZED_RECYCLER, BIO_DIESEL_COLLECTOR
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  restaurant           Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id                 String    @id @default(cuid())
+  restaurantId       String
+  uploaderId         String
+  docType            String    // FSSAI_CERTIFICATE, PEST_CONTROL_LOG, WATER_TEST_REPORT, MEDICAL_FITNESS_CERT, CLEANING_SANITATION_LOG, TEMPERATURE_LOG, FOSTAC_CERTIFICATE, AUDIT_REPORT
+  title              String
+  fileUrl            String
+  fileName           String
+  fileSize           Int       @default(0)
+  issueDate          DateTime?
+  expiryDate         DateTime?
+  verificationStatus String    @default("UNVERIFIED") // UNVERIFIED, PENDING_VERIFICATION, VERIFIED, REJECTED, EXPIRED
+  verifiedById       String?
+  verifiedAt         DateTime?
+  rejectionReason    String?
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  restaurant         Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  uploader           User       @relation("UploaderDocuments", fields: [uploaderId], references: [id])
+  verifier           User?      @relation("VerifierDocuments", fields: [verifiedById], references: [id])
+
+  @@index([restaurantId, docType])
+  @@index([verificationStatus])
+}
+
+model Inspection {
+  id                          String    @id @default(cuid())
+  restaurantId                String
+  inspectorId                 String
+  inspectionType              String    // INITIAL_VERIFICATION, ROUTINE_HYGIENE, SURPRISE_AUDIT, REINSPECTION, CONSUMER_COMPLAINT_AUDIT
+  status                      String    @default("COMPLETED") // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
+  scheduledDate               DateTime?
+  completedDate               DateTime?
+  overallScore                Int       @default(0) // 0-100
+  hygieneRatingSmiles         Int       @default(3) // 1-5 (FSSAI equivalent Hygiene Rating)
+  findingsSummary             String
+  criticalViolationsCount     Int       @default(0)
+  nonCriticalViolationsCount  Int       @default(0)
+  correctiveActionsRequired   String?
+  reInspectionDueDate         DateTime?
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+
+  restaurant                  Restaurant           @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  inspector                   User                 @relation("InspectorInspections", fields: [inspectorId], references: [id])
+  categories                  InspectionCategory[]
+
+  @@index([restaurantId, completedDate])
+}
+
+model InspectionCategory {
+  id                 String   @id @default(cuid())
+  inspectionId       String
+  categoryKey        String   // HYGIENE_SANITATION, FOOD_HANDLING, PEST_MANAGEMENT, TEMPERATURE_CONTROL, DOCUMENTATION_COMPLIANCE
+  name               String
+  weightPercent      Int      // e.g., 25, 25, 15, 15, 20
+  scoreObtained      Int      // 0-100
+  weightedScore      Float    // (scoreObtained * weightPercent) / 100
+  verificationStatus String   // VERIFIED_COMPLIANT, MINOR_NON_COMPLIANCE, CRITICAL_NON_COMPLIANCE, NOT_OBSERVED
+  observations       String
+  recommendations    String?
+
+  inspection         Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([inspectionId, categoryKey])
+}
+
+model SafetyAssessment {
+  id                String    @id @default(cuid())
+  restaurantId      String
+  categoryKey       String    // HYGIENE_SANITATION, FOOD_HANDLING, PEST_MANAGEMENT, TEMPERATURE_CONTROL, DOCUMENTATION_COMPLIANCE
+  title             String
+  standardRequired  String
+  currentStatus     String    // COMPLIANT, NON_COMPLIANT, UNVERIFIED, EXPIRED, MISSING_EVIDENCE
+  evidenceDocId     String?
+  confidenceWeight  Int       @default(100) // %
+  lastAssessedAt    DateTime  @default(now())
+  notes             String?
+
+  restaurant        Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, categoryKey])
+}
+
+model ScoreHistory {
+  id             String   @id @default(cuid())
+  restaurantId   String
+  previousScore  Int
+  newScore       Int
+  triggerEvent   String   // NEW_INSPECTION, DOCUMENT_EXPIRED, COMPLIANCE_UPDATE, MANUAL_RECALCULATION
+  notes          String?
+  calculatedAt   DateTime @default(now())
+
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, calculatedAt])
+}
+
+model VerificationRequest {
+  id                  String    @id @default(cuid())
+  restaurantId        String
+  requestedById       String
+  status              String    @default("PENDING") // PENDING, UNDER_REVIEW, APPROVED, REJECTED, NEEDS_MORE_INFO
+  requestedAt         DateTime  @default(now())
+  reviewedAt          DateTime?
+  reviewerId          String?
+  requestNotes        String?
+  reviewDecisionNotes String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  restaurant          Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  requester           User       @relation("RequesterVerificationRequests", fields: [requestedById], references: [id])
+  reviewer            User?      @relation("ReviewerVerificationRequests", fields: [reviewerId], references: [id])
+
+  @@index([restaurantId, status])
+}
+
+model ConsumerReport {
+  id               String    @id @default(cuid())
+  restaurantId     String
+  reporterId       String?
+  reporterEmail    String
+  reporterName     String
+  issueType        String    // POOR_HYGIENE, UNHYGIENIC_FOOD_HANDLER, PEST_SIGHTING, SICKNESS_SUSPICION, EXPIRED_INGREDIENTS, GENERAL_SAFETY
+  description      String
+  incidentDate     DateTime?
+  evidenceFileUrl  String?
+  status           String    @default("SUBMITTED") // SUBMITTED, UNDER_INVESTIGATION, RESOLVED, DISMISSED
+  resolutionNotes  String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  restaurant       Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  reporter         User?      @relation("ReporterReports", fields: [reporterId], references: [id])
+
+  @@index([restaurantId, status])
+}
+
+model SavedRestaurant {
+  id           String   @id @default(cuid())
+  userId       String
+  restaurantId String
+  savedAt      DateTime @default(now())
+
+  user         User       @relation("UserSavedRestaurants", fields: [userId], references: [id], onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, restaurantId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   // VERIFICATION_UPDATE, DOCUMENT_EXPIRY_WARNING, SAFETY_ALERT, REPORT_STATUS
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorId       String?
+  actorRole     String?
+  action        String   // USER_LOGIN, DOCUMENT_VERIFIED, SCORE_RECALCULATED, REPORT_SUBMITTED, etc.
+  entityType    String   // Restaurant, Document, Inspection, etc.
+  entityId      String?
+  previousState String?
+  newState      String?
+  ipAddress     String?
+  createdAt     DateTime @default(now())
+
+  actor         User?    @relation("ActorAuditLogs", fields: [actorId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
