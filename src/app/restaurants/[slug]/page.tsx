@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { DEMO_RESTAURANTS } from "@/lib/demoData";
 import SafetyScoreBadge from "@/components/SafetyScoreBadge";
 import { formatDate, getVerificationStatusBadge, getScoreBadge } from "@/lib/utils";
 import { SCORING_CATEGORIES } from "@/lib/scoring";
@@ -33,27 +34,37 @@ interface Props {
 }
 
 export default async function RestaurantProfilePage({ params }: Props) {
-  const restaurant = await prisma.restaurant.findUnique({
-    where: { slug: params.slug },
-    include: {
-      kitchenProfile: true,
-      documents: {
-        orderBy: { createdAt: "desc" },
-      },
-      inspections: {
-        orderBy: { completedDate: "desc" },
-        include: {
-          inspector: { select: { name: true } },
-          categories: true,
+  let restaurant: any = null;
+
+  try {
+    restaurant = await prisma.restaurant.findUnique({
+      where: { slug: params.slug },
+      include: {
+        kitchenProfile: true,
+        documents: {
+          orderBy: { createdAt: "desc" },
+        },
+        inspections: {
+          orderBy: { completedDate: "desc" },
+          include: {
+            inspector: { select: { name: true } },
+            categories: true,
+          },
+        },
+        safetyAssessments: true,
+        consumerReports: {
+          orderBy: { createdAt: "desc" },
+          take: 5,
         },
       },
-      safetyAssessments: true,
-      consumerReports: {
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      },
-    },
-  });
+    });
+  } catch (dbErr) {
+    console.warn("Database unavailable, searching demo restaurants:", dbErr);
+  }
+
+  if (!restaurant) {
+    restaurant = DEMO_RESTAURANTS.find((r) => r.slug === params.slug) || null;
+  }
 
   if (!restaurant) {
     notFound();
@@ -258,7 +269,7 @@ export default async function RestaurantProfilePage({ params }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Object.values(SCORING_CATEGORIES).map((cat) => {
               const auditCat = latestInspection?.categories.find(
-                (c) => c.categoryKey === cat.key
+                (c: any) => c.categoryKey === cat.key
               );
               const score = auditCat ? auditCat.scoreObtained : 0;
               const status = auditCat?.verificationStatus || "MISSING_EVIDENCE";
@@ -334,7 +345,7 @@ export default async function RestaurantProfilePage({ params }: Props) {
           </div>
 
           <div className="divide-y divide-[#E7E7DE] border-y border-[#E7E7DE]">
-            {restaurant.documents.map((doc) => (
+            {restaurant.documents.map((doc: any) => (
               <div
                 key={doc.id}
                 className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
@@ -392,7 +403,7 @@ export default async function RestaurantProfilePage({ params }: Props) {
             </div>
 
             <div className="space-y-6">
-              {restaurant.inspections.map((insp) => (
+              {restaurant.inspections.map((insp: any) => (
                 <div
                   key={insp.id}
                   className="p-5 rounded-lg border border-[#E7E7DE] bg-[#FBFBF9] space-y-3"
@@ -435,3 +446,4 @@ export default async function RestaurantProfilePage({ params }: Props) {
     </div>
   );
 }
+

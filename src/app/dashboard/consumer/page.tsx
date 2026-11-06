@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { DEMO_USERS, DEMO_RESTAURANTS } from "@/lib/demoData";
 import RestaurantCard from "@/components/RestaurantCard";
 import { formatDate } from "@/lib/utils";
 import {
@@ -12,45 +13,115 @@ import {
   CheckCircle2,
   Clock,
   ArrowRight,
+  Info,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConsumerDashboard() {
-  const session = await getSession();
-  if (!session) {
-    redirect("/login");
+  const realSession = await getSession();
+  const isDemoMode = !realSession;
+  const session = realSession || DEMO_USERS.consumer;
+
+  let saved: any[] = [];
+  let reports: any[] = [];
+  let notifications: any[] = [];
+
+  try {
+    saved = await prisma.savedRestaurant.findMany({
+      where: { userId: session.userId },
+      include: {
+        restaurant: {
+          include: { kitchenProfile: true },
+        },
+      },
+      orderBy: { savedAt: "desc" },
+    });
+
+    reports = await prisma.consumerReport.findMany({
+      where: { reporterId: session.userId },
+      include: {
+        restaurant: { select: { name: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    notifications = await prisma.notification.findMany({
+      where: { userId: session.userId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+  } catch (e) {
+    console.warn("Consumer dashboard falling back to demonstration dataset:", e);
   }
 
-  // Fetch saved kitchens
-  const saved = await prisma.savedRestaurant.findMany({
-    where: { userId: session.userId },
-    include: {
-      restaurant: {
-        include: { kitchenProfile: true },
+  if (!saved || saved.length === 0) {
+    saved = [
+      {
+        id: "saved-1",
+        savedAt: new Date("2026-10-18T10:00:00Z"),
+        restaurant: DEMO_RESTAURANTS[0],
       },
-    },
-    orderBy: { savedAt: "desc" },
-  });
+      {
+        id: "saved-2",
+        savedAt: new Date("2026-10-14T15:30:00Z"),
+        restaurant: DEMO_RESTAURANTS[1],
+      },
+    ];
+  }
 
-  // Fetch submitted reports
-  const reports = await prisma.consumerReport.findMany({
-    where: { reporterId: session.userId },
-    include: {
-      restaurant: { select: { name: true, slug: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  if (!reports || reports.length === 0) {
+    reports = [
+      {
+        id: "rep-1",
+        incidentDate: new Date("2026-10-10"),
+        issueType: "PEST_SIGHTING",
+        description: "Observed fruit flies near cold juice preparation station during evening order pickup.",
+        severity: "MEDIUM",
+        status: "UNDER_INVESTIGATION",
+        restaurant: { name: DEMO_RESTAURANTS[4].name, slug: DEMO_RESTAURANTS[4].slug },
+      },
+    ];
+  }
 
-  // Fetch notifications
-  const notifications = await prisma.notification.findMany({
-    where: { userId: session.userId },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+  if (!notifications || notifications.length === 0) {
+    notifications = [
+      {
+        id: "notif-1",
+        title: "Kitchen Audit Update",
+        message: "Spice Pavilion Connaught Place was verified with a 94/100 Hygiene Index.",
+        createdAt: new Date("2026-10-18T12:00:00Z"),
+        read: true,
+      },
+      {
+        id: "notif-2",
+        title: "Report Triaged",
+        message: "Your hygiene feedback for Chai & Samosa Junction has been routed to the auditor.",
+        createdAt: new Date("2026-10-12T08:30:00Z"),
+        read: false,
+      },
+    ];
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+      {/* Demonstration Banner */}
+      {isDemoMode && (
+        <div className="bg-[#F0F6F2] border border-[#B8D4C2] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#143D2B]">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div>
+              <strong>Demonstration Mode (Consumer Portal)</strong> — Viewing saved kitchens, hygiene reports, and alerts with verified model data.
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="px-3 py-1 bg-white border border-[#B8D4C2] rounded font-semibold text-[#143D2B] hover:bg-[#DCE9E0]">
+              Log In as Consumer
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Welcome header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E7E7DE] pb-6">
         <div>
@@ -167,3 +238,4 @@ export default async function ConsumerDashboard() {
     </div>
   );
 }
+

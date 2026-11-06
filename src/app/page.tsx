@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { DEMO_RESTAURANTS } from "@/lib/demoData";
 import RestaurantCard from "@/components/RestaurantCard";
 import {
   ShieldCheck,
@@ -20,10 +21,19 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const featuredRestaurants = await prisma.restaurant.findMany({
-    take: 3,
-    orderBy: { safetyScore: "desc" },
-  });
+  let featuredRestaurants: any[] = [];
+  try {
+    featuredRestaurants = await prisma.restaurant.findMany({
+      take: 3,
+      orderBy: { safetyScore: "desc" },
+    });
+  } catch (e) {
+    console.warn("HomePage falling back to verified demo data:", e);
+  }
+
+  if (!featuredRestaurants || featuredRestaurants.length === 0) {
+    featuredRestaurants = DEMO_RESTAURANTS.slice(0, 3);
+  }
 
   return (
     <div className="space-y-24 pb-24">
@@ -396,3 +406,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

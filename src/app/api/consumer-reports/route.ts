@@ -72,3 +72,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to submit safety report" }, { status: 500 });
   }
 }
+

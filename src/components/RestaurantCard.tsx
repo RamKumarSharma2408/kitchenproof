@@ -152,3 +152,4 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     </article>
   );
 }
+

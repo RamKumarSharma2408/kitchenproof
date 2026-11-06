@@ -189,3 +189,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to record inspection outcome" }, { status: 500 });
   }
 }
+

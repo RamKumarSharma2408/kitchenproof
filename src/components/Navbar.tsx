@@ -59,11 +59,19 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-[#FBFBF9]/90 backdrop-blur-md border-b border-[#E7E7DE]">
       {/* Statutory & Demo Notification Bar */}
-      <div className="bg-[#143D2B] text-[#DCE9E0] px-4 py-1.5 text-xs text-center font-medium tracking-wide flex items-center justify-center gap-2">
-        <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>
-          <strong>KitchenProof National Directory</strong> — Independent Food Safety Transparency Platform (Demonstration Mode with Verified Model Data)
-        </span>
+      <div className="bg-[#143D2B] text-[#DCE9E0] px-4 py-1.5 text-xs text-center font-medium tracking-wide flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span><strong>KitchenProof</strong> National Transparency Platform (FSSAI Schedule 4 Aligned)</span>
+        </div>
+        <div className="hidden sm:flex items-center gap-3 text-[11px] text-[#A3C9B2]">
+          <span className="text-[#5D9C75]">|</span>
+          <span className="text-[#DCE9E0] font-semibold">Demo Portals:</span>
+          <Link href="/dashboard/consumer" className="hover:text-white underline">Consumer</Link>
+          <Link href="/dashboard/owner" className="hover:text-white underline">Kitchen Owner</Link>
+          <Link href="/dashboard/inspector" className="hover:text-white underline">Auditor</Link>
+          <Link href="/dashboard/admin" className="hover:text-white underline">Governance</Link>
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -208,6 +216,42 @@ export default function Navbar() {
                 >
                   Get Started
                 </Link>
+
+                <div className="pt-2 border-t border-[#E7E7DE] space-y-1">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#868A85] px-1">
+                    Demo Portals
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <Link
+                      href="/dashboard/consumer"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
+                    >
+                      Consumer
+                    </Link>
+                    <Link
+                      href="/dashboard/owner"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
+                    >
+                      Kitchen Owner
+                    </Link>
+                    <Link
+                      href="/dashboard/inspector"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
+                    >
+                      Auditor
+                    </Link>
+                    <Link
+                      href="/dashboard/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
+                    >
+                      Governance
+                    </Link>
+                  </div>
+                </div>
               </>
             )}
           </div>
@@ -216,3 +260,4 @@ export default function Navbar() {
     </header>
   );
 }
+

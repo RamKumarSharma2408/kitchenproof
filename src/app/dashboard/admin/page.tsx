@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { DEMO_USERS, DEMO_METRICS, DEMO_RESTAURANTS } from "@/lib/demoData";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import {
   Building,
@@ -13,63 +14,144 @@ import {
   CheckCircle2,
   Clock,
   ArrowRight,
+  Info,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const session = await getSession();
-  if (!session || session.role !== "ADMIN") {
-    redirect("/login");
+  const realSession = await getSession();
+  const isDemoMode = !realSession || realSession.role !== "ADMIN";
+  const session = realSession && realSession.role === "ADMIN" ? realSession : DEMO_USERS.admin;
+
+  let totalRestaurants = DEMO_METRICS.totalRestaurants;
+  let verifiedRestaurants = DEMO_METRICS.verifiedRestaurants;
+  let pendingRequests = DEMO_METRICS.pendingRequests;
+  let reportedConcerns = DEMO_METRICS.reportedConcerns;
+  let totalUsers = DEMO_METRICS.totalUsers;
+  let totalInspections = DEMO_METRICS.totalInspections;
+  let expiredLicenses = DEMO_METRICS.expiredLicenses;
+  let auditLogs: any[] = [];
+  let restaurants: any[] = [];
+
+  try {
+    totalRestaurants = await prisma.restaurant.count();
+    verifiedRestaurants = await prisma.restaurant.count({
+      where: { verificationStatus: "VERIFIED" },
+    });
+    pendingRequests = await prisma.verificationRequest.count({
+      where: { status: "PENDING" },
+    });
+    reportedConcerns = await prisma.consumerReport.count({
+      where: { status: { in: ["SUBMITTED", "UNDER_INVESTIGATION"] } },
+    });
+    totalUsers = await prisma.user.count();
+    totalInspections = await prisma.inspection.count();
+
+    expiredLicenses = await prisma.restaurant.count({
+      where: {
+        fssaiValidUntil: { lt: new Date() },
+      },
+    });
+
+    auditLogs = await prisma.auditLog.findMany({
+      take: 15,
+      orderBy: { createdAt: "desc" },
+      include: {
+        actor: { select: { name: true, role: true, email: true } },
+      },
+    });
+
+    restaurants = await prisma.restaurant.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        city: true,
+        locality: true,
+        safetyScore: true,
+        verificationStatus: true,
+        createdAt: true,
+      },
+    });
+  } catch (e) {
+    console.warn("Admin query falling back to demonstration dataset:", e);
   }
 
-  // Calculate real metrics directly from the database
-  const totalRestaurants = await prisma.restaurant.count();
-  const verifiedRestaurants = await prisma.restaurant.count({
-    where: { verificationStatus: "VERIFIED" },
-  });
-  const pendingRequests = await prisma.verificationRequest.count({
-    where: { status: "PENDING" },
-  });
-  const reportedConcerns = await prisma.consumerReport.count({
-    where: { status: { in: ["SUBMITTED", "UNDER_INVESTIGATION"] } },
-  });
-  const totalUsers = await prisma.user.count();
-  const totalInspections = await prisma.inspection.count();
+  if (!restaurants || restaurants.length === 0) {
+    restaurants = DEMO_RESTAURANTS.map((r) => ({
+      id: r.id,
+      name: r.name,
+      slug: r.slug,
+      city: r.city,
+      locality: r.locality,
+      safetyScore: r.safetyScore,
+      verificationStatus: r.verificationStatus,
+      createdAt: new Date(),
+    }));
+  }
 
-  // Expired licenses
-  const expiredLicenses = await prisma.restaurant.count({
-    where: {
-      fssaiValidUntil: { lt: new Date() },
-    },
-  });
-
-  // Recent audit logs
-  const auditLogs = await prisma.auditLog.findMany({
-    take: 15,
-    orderBy: { createdAt: "desc" },
-    include: {
-      actor: { select: { name: true, role: true, email: true } },
-    },
-  });
-
-  // All restaurants with status
-  const restaurants = await prisma.restaurant.findMany({
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      city: true,
-      locality: true,
-      safetyScore: true,
-      verificationStatus: true,
-      createdAt: true,
-    },
-  });
+  if (!auditLogs || auditLogs.length === 0) {
+    auditLogs = [
+      {
+        id: "log-1",
+        action: "INSPECTION_RECORDED",
+        entityType: "INSPECTION",
+        entityId: "insp-1",
+        metadata: "Spice Pavilion audit completed with score 94/100",
+        createdAt: new Date("2026-10-18T14:30:00Z"),
+        actor: { name: "Dr. Anil K. Sharma", role: "INSPECTOR", email: "dr.anil.inspector@example.com" },
+      },
+      {
+        id: "log-2",
+        action: "DOCUMENT_VERIFIED",
+        entityType: "DOCUMENT",
+        entityId: "doc-1",
+        metadata: "IS 10500 Potable Water Bacteriological Test verified",
+        createdAt: new Date("2026-10-18T14:15:00Z"),
+        actor: { name: "Dr. Anil K. Sharma", role: "INSPECTOR", email: "dr.anil.inspector@example.com" },
+      },
+      {
+        id: "log-3",
+        action: "VERIFICATION_REQUESTED",
+        entityType: "VERIFICATION_REQUEST",
+        entityId: "req-1",
+        metadata: "Annual hygiene verification requested for Dosa Heritage Kitchen",
+        createdAt: new Date("2026-10-16T11:00:00Z"),
+        actor: { name: "Priya Sundaram", role: "RESTAURANT_OWNER", email: "priya.owner@example.com" },
+      },
+      {
+        id: "log-4",
+        action: "USER_REGISTERED",
+        entityType: "USER",
+        entityId: "user-cons-1",
+        metadata: "Consumer account registered: Rahul Verma",
+        createdAt: new Date("2026-10-15T09:20:00Z"),
+        actor: { name: "Rahul Verma", role: "CONSUMER", email: "rahul.consumer@example.com" },
+      },
+    ];
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+      {/* Demonstration Banner */}
+      {isDemoMode && (
+        <div className="bg-[#F0F6F2] border border-[#B8D4C2] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#143D2B]">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div>
+              <strong>Demonstration Mode (National Administrator)</strong> — Viewing platform governance metrics and system audit trails with verified model data.
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="px-3 py-1 bg-white border border-[#B8D4C2] rounded font-semibold text-[#143D2B] hover:bg-[#DCE9E0]">
+              Log In as Administrator
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="border-b border-[#E7E7DE] pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -256,3 +338,4 @@ export default async function AdminDashboardPage() {
     </div>
   );
 }
+
