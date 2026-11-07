@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { formatDate, getScoreBadge, getVerificationStatusBadge } from "@/lib/utils";
+import QRCodeModal from "@/components/QRCodeModal";
+import DocumentViewerModal, { InspectedDocument } from "@/components/DocumentViewerModal";
 import {
   Building,
   ShieldCheck,
@@ -15,6 +17,7 @@ import {
   Send,
   Plus,
   ExternalLink,
+  QrCode,
 } from "lucide-react";
 
 interface OwnerClientProps {
@@ -44,6 +47,10 @@ export default function OwnerClient({ initialRestaurants, userName, userEmail }:
   const [requestModalOpen, setRequestModalOpen] = useState(false);
   const [requestNotes, setRequestNotes] = useState("");
   const [requesting, setRequesting] = useState(false);
+
+  // QR Modal and Document Modal
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState<InspectedDocument | null>(null);
 
   const selectedRestaurant = restaurants.find((r) => r.id === selectedRestaurantId);
   const statusBadge = selectedRestaurant
@@ -241,6 +248,14 @@ export default function OwnerClient({ initialRestaurants, userName, userEmail }:
               Score: {selectedRestaurant.safetyScore}/100 ({scoreBadge.label})
             </div>
 
+            <button
+              onClick={() => setQrModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#143D2B] text-white rounded-lg text-xs font-semibold hover:bg-[#0D281C] transition-colors"
+            >
+              <QrCode className="w-3.5 h-3.5" />
+              <span>Get QR Poster</span>
+            </button>
+
             <Link
               href={`/restaurants/${selectedRestaurant.slug}`}
               className="text-xs font-semibold text-[#143D2B] underline"
@@ -389,8 +404,18 @@ export default function OwnerClient({ initialRestaurants, userName, userEmail }:
                       </div>
                     </div>
 
-                    <div className="text-right text-[11px] text-[#868A85]">
-                      Uploaded {formatDate(doc.createdAt)}
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDoc(doc)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#143D2B] bg-[#F0F6F2] hover:bg-[#DCE9E0] rounded border border-[#B8D4C2] transition-colors"
+                      >
+                        <span>Inspect</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </button>
+                      <div className="text-right text-[11px] text-[#868A85]">
+                        Uploaded {formatDate(doc.createdAt)}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -556,6 +581,31 @@ export default function OwnerClient({ initialRestaurants, userName, userEmail }:
           </div>
         </div>
       )}
+
+      {/* QR Poster Modal */}
+      {selectedRestaurant && (
+        <QRCodeModal
+          isOpen={qrModalOpen}
+          onClose={() => setQrModalOpen(false)}
+          restaurant={{
+            id: selectedRestaurant.id,
+            name: selectedRestaurant.name,
+            slug: selectedRestaurant.slug,
+            locality: selectedRestaurant.locality,
+            city: selectedRestaurant.city,
+            safetyScore: selectedRestaurant.safetyScore,
+            verificationStatus: selectedRestaurant.verificationStatus,
+            fssaiNumber: selectedRestaurant.fssaiNumber,
+          }}
+        />
+      )}
+
+      {/* Document Inspector Modal */}
+      <DocumentViewerModal
+        document={selectedDoc}
+        restaurantName={selectedRestaurant?.name || "Kitchen Profile"}
+        onClose={() => setSelectedDoc(null)}
+      />
     </div>
   );
 }

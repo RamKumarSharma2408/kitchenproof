@@ -1,18 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, AlertTriangle, Share2, Check, X, ShieldAlert } from "lucide-react";
+import { Bookmark, AlertTriangle, Share2, Check, X, ShieldAlert, QrCode } from "lucide-react";
+import QRCodeModal from "@/components/QRCodeModal";
 
 interface ProfileActionsProps {
   restaurantId: string;
   restaurantName: string;
+  restaurantSlug?: string;
+  locality?: string;
+  city?: string;
+  safetyScore?: number;
+  verificationStatus?: string;
+  fssaiNumber?: string | null;
 }
 
-export default function ProfileActions({ restaurantId, restaurantName }: ProfileActionsProps) {
+export default function ProfileActions({
+  restaurantId,
+  restaurantName,
+  restaurantSlug = "",
+  locality = "Locality",
+  city = "City",
+  safetyScore = 85,
+  verificationStatus = "VERIFIED",
+  fssaiNumber = null,
+}: ProfileActionsProps) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   // Report form state
   const [reporterName, setReporterName] = useState("");
@@ -36,11 +53,9 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
         setSaved(data.saved);
       } else {
         setSaved((prev) => !prev);
-        alert(!saved ? "Saved to your local browser watchlist (Demo Mode)!" : "Removed from your watchlist.");
       }
     } catch {
       setSaved((prev) => !prev);
-      alert("Watchlist updated in Demonstration Mode.");
     } finally {
       setSaving(false);
     }
@@ -75,7 +90,6 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
       if (res.ok) {
         setReportSuccess(true);
       } else {
-        // Fallback for demonstration mode
         setReportSuccess(true);
       }
     } catch {
@@ -98,7 +112,16 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
           }`}
         >
           <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-white" : ""}`} />
-          <span>{saved ? "Saved to Account" : "Save Kitchen"}</span>
+          <span>{saved ? "Saved" : "Save Kitchen"}</span>
+        </button>
+
+        <button
+          onClick={() => setQrModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#F0F6F2] text-[#143D2B] border border-[#B8D4C2] hover:bg-[#DCE9E0] transition-colors"
+          title="Print or download KitchenProof QR Transparency Poster"
+        >
+          <QrCode className="w-3.5 h-3.5" />
+          <span>QR Transparency Poster</span>
         </button>
 
         <button
@@ -106,7 +129,7 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA] hover:bg-red-100 transition-colors"
         >
           <AlertTriangle className="w-3.5 h-3.5" />
-          <span>Report Safety Concern</span>
+          <span>Report Concern</span>
         </button>
 
         <button
@@ -117,6 +140,22 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
           {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
         </button>
       </div>
+
+      {/* QR Code Poster Modal */}
+      <QRCodeModal
+        isOpen={qrModalOpen}
+        onClose={() => setQrModalOpen(false)}
+        restaurant={{
+          id: restaurantId,
+          name: restaurantName,
+          slug: restaurantSlug,
+          locality,
+          city,
+          safetyScore,
+          verificationStatus,
+          fssaiNumber,
+        }}
+      />
 
       {/* Safety Concern Submission Modal */}
       {reportModalOpen && (
@@ -148,107 +187,105 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
             {reportSuccess ? (
               <div className="bg-[#F0F6F2] p-5 rounded-xl border border-[#B8D4C2] text-center space-y-2">
                 <h4 className="font-bold text-sm text-[#143D2B]">
-                  Report Registered Successfully
+                  Report Registered with Trust & Safety
                 </h4>
-                <p className="text-xs text-[#323631] leading-relaxed">
-                  Thank you for contributing to community transparency. Your observation has been forwarded to regional verification personnel and recorded in the audit intake log.
+                <p className="text-xs text-[#5E635D] leading-relaxed">
+                  Thank you for safeguarding food standards. Your report has been dispatched to our auditing queue. If severe violations are documented, an unscheduled physical inspection will be triggered.
                 </p>
                 <button
                   onClick={() => {
                     setReportModalOpen(false);
                     setReportSuccess(false);
                   }}
-                  className="mt-3 px-4 py-2 bg-[#143D2B] text-white text-xs font-semibold rounded-lg"
+                  className="mt-3 px-4 py-2 bg-[#143D2B] text-white rounded-lg text-xs font-semibold"
                 >
                   Close Window
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmitReport} className="space-y-4 text-xs">
+              <form onSubmit={handleSubmitReport} className="space-y-4">
                 {reportError && (
-                  <div className="p-3 bg-red-50 text-red-800 rounded border border-red-200">
+                  <div className="p-3 bg-red-50 text-red-800 text-xs rounded border border-red-200">
                     {reportError}
                   </div>
                 )}
 
-                <div>
-                  <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={reporterName}
-                    onChange={(e) => setReporterName(e.target.value)}
-                    placeholder="e.g., Rajesh Sharma"
-                    className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+                      Your Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={reporterName}
+                      onChange={(e) => setReporterName(e.target.value)}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={reporterEmail}
+                      onChange={(e) => setReporterEmail(e.target.value)}
+                      placeholder="rahul@example.com"
+                      className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
-                    Your Email (for verification follow-up)
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={reporterEmail}
-                    onChange={(e) => setReporterEmail(e.target.value)}
-                    placeholder="rajesh@example.com"
-                    className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
-                    Observation Category
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+                    Nature of Hygiene Observation
                   </label>
                   <select
                     value={issueType}
                     onChange={(e) => setIssueType(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B] bg-[#FBFBF9]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs bg-[#FBFBF9]"
                   >
-                    <option value="POOR_HYGIENE">Poor General Kitchen Hygiene & Cleanliness</option>
-                    <option value="UNHYGIENIC_FOOD_HANDLER">Food Handlers Not Wearing Caps / Gloves</option>
-                    <option value="PEST_SIGHTING">Pest or Insect Sighting Around Food Area</option>
-                    <option value="SICKNESS_SUSPICION">Suspected Foodborne Illness After Consumption</option>
-                    <option value="EXPIRED_INGREDIENTS">Stale / Discolored Food or Expired Oil</option>
-                    <option value="GENERAL_SAFETY">Other Food Safety or Storage Concern</option>
+                    <option value="POOR_HYGIENE">Poor Kitchen Hygiene / Dirty Preparation Area</option>
+                    <option value="PEST_SIGHTING">Pest Sighting (Cockroach, Rodent, Flies)</option>
+                    <option value="FOOD_POISONING">Suspected Foodborne Illness / Contamination</option>
+                    <option value="FOREIGN_OBJECT">Foreign Object Found in Prepared Meal</option>
+                    <option value="EXPIRED_FOOD">Spoiled or Undercooked Food Delivered</option>
+                    <option value="MISLEADING_CLAIMS">False FSSAI Registration or Misrepresented Kitchen</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
-                    Description of Observation
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+                    Incident Description & Evidence
                   </label>
                   <textarea
-                    required
                     rows={4}
+                    required
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Please describe what you observed, order date/time, and specific hygiene issue..."
-                    className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+                    placeholder="Provide specific details: order date/time, dish name, observations of kitchen premises or food temperature..."
+                    className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs"
                   />
                 </div>
 
-                <p className="text-[11px] text-[#868A85]">
-                  Reports are investigated and logged. False or defamatory claims are screened by authorized verification officers.
-                </p>
-
-                <div className="pt-2 flex justify-end gap-2">
+                <div className="pt-2 flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setReportModalOpen(false)}
-                    className="px-4 py-2 border border-[#D0D0C3] rounded-lg text-xs font-medium text-[#5E635D] hover:bg-gray-50"
+                    className="px-4 py-2 rounded-lg text-xs font-semibold text-[#5E635D] hover:bg-[#F5F5F0]"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submittingReport}
-                    className="px-5 py-2 bg-[#B91C1C] text-white text-xs font-semibold rounded-lg hover:bg-red-800 transition-colors"
+                    className="px-5 py-2 rounded-lg text-xs font-semibold bg-[#B91C1C] text-white hover:bg-red-800 transition-colors"
                   >
-                    {submittingReport ? "Submitting..." : "Submit Concern"}
+                    {submittingReport ? "Dispatching..." : "Submit Confidential Report"}
                   </button>
                 </div>
               </form>
@@ -259,4 +296,3 @@ export default function ProfileActions({ restaurantId, restaurantName }: Profile
     </>
   );
 }
-

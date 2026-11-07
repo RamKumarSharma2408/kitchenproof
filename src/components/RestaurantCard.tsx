@@ -56,13 +56,16 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
           {/* Verification Status Pill */}
           <div className="absolute top-2.5 right-2.5">
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold shadow-sm border ${statusBadge.bg} ${statusBadge.text} ${statusBadge.border}`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold shadow-sm border backdrop-blur-sm ${statusBadge.bg} ${statusBadge.text} ${statusBadge.border}`}
             >
-              {restaurant.verificationStatus === "VERIFIED" && (
-                <ShieldCheck className="w-3.5 h-3.5 text-[#143D2B]" />
-              )}
-              {restaurant.verificationStatus === "ACTION_REQUIRED" && (
-                <AlertTriangle className="w-3.5 h-3.5 text-[#B91C1C]" />
+              {(restaurant.verificationStatus === "VERIFIED" || restaurant.verificationStatus === "INDEPENDENTLY_VERIFIED") ? (
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              ) : (restaurant.verificationStatus === "ACTION_REQUIRED" || restaurant.verificationStatus === "REJECTED") ? (
+                <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+              ) : (restaurant.verificationStatus === "PENDING_REVIEW" || restaurant.verificationStatus === "PENDING_VERIFICATION") ? (
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+              ) : (
+                <span className={`w-2 h-2 rounded-full ${statusBadge.dot}`} />
               )}
               {statusBadge.label}
             </span>

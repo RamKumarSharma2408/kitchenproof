@@ -26,6 +26,7 @@ import {
   Building,
 } from "lucide-react";
 import ProfileActions from "./ProfileActions";
+import DocumentList from "./DocumentList";
 
 export const dynamic = "force-dynamic";
 
@@ -163,6 +164,12 @@ export default async function RestaurantProfilePage({ params }: Props) {
               <ProfileActions
                 restaurantId={restaurant.id}
                 restaurantName={restaurant.name}
+                restaurantSlug={restaurant.slug}
+                locality={restaurant.locality}
+                city={restaurant.city}
+                safetyScore={restaurant.safetyScore}
+                verificationStatus={restaurant.verificationStatus}
+                fssaiNumber={restaurant.fssaiNumber}
               />
 
               <div className="text-right text-[11px] text-[#868A85] space-y-1">
@@ -329,66 +336,10 @@ export default async function RestaurantProfilePage({ params }: Props) {
         </div>
 
         {/* Row C: Verified Evidence Documents */}
-        <div className="bg-white border border-[#E7E7DE] rounded-xl p-6 sm:p-8 shadow-subtle space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="text-xl font-serif font-bold text-[#161815]">
-                Verified Documentation & Laboratory Certificates
-              </h2>
-              <p className="text-xs text-[#5E635D] mt-1">
-                Audited documents provided by the business operator. Redacted for consumer inspection.
-              </p>
-            </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded bg-[#F0F6F2] text-[#143D2B] border border-[#B8D4C2]">
-              {restaurant.documents.length} Records Verified
-            </span>
-          </div>
-
-          <div className="divide-y divide-[#E7E7DE] border-y border-[#E7E7DE]">
-            {restaurant.documents.map((doc: any) => (
-              <div
-                key={doc.id}
-                className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-[#143D2B]" />
-                    <span className="font-semibold text-sm text-[#161815]">{doc.title}</span>
-                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-brand-50 text-brand-800 border border-brand-200">
-                      {doc.verificationStatus}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#5E635D]">
-                    {doc.notes || "Official certificate verified by accredited auditor."}
-                  </p>
-                  <div className="flex items-center gap-4 text-[11px] text-[#868A85]">
-                    {doc.issueDate && <span>Issued: {formatDate(doc.issueDate)}</span>}
-                    {doc.expiryDate && (
-                      <span className={new Date(doc.expiryDate) < new Date() ? "text-red-700 font-bold" : ""}>
-                        Valid Until: {formatDate(doc.expiryDate)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#5E635D] font-mono">
-                    {(doc.fileSize / 1024).toFixed(0)} KB PDF
-                  </span>
-                  <a
-                    href={doc.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-semibold text-[#143D2B] bg-[#F0F6F2] hover:bg-[#DCE9E0] transition-colors"
-                  >
-                    <span>Inspect</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <DocumentList
+          documents={restaurant.documents}
+          restaurantName={restaurant.name}
+        />
 
         {/* Row D: Inspection History Log */}
         {restaurant.inspections.length > 0 && (
@@ -442,6 +393,17 @@ export default async function RestaurantProfilePage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* Statutory Transparency Disclaimer */}
+        <div className="bg-[#F5F5F0] border border-[#E7E7DE] rounded-xl p-5 text-xs text-[#5E635D] space-y-2">
+          <div className="flex items-center gap-2 text-[#143D2B] font-bold text-xs">
+            <Info className="w-4 h-4 flex-shrink-0" />
+            <span>Independent Platform Compliance & Transparency Notice</span>
+          </div>
+          <p className="leading-relaxed">
+            KitchenProof™ is an independent food safety transparency intelligence service benchmarked to FSSAI Schedule 4 sanitary requirements and Codex Alimentarius guidelines. Demonstration profiles reflect standardized compliance models for operational evaluation. KitchenProof does not issue official government registrations; statutory enforcement remains exclusively with municipal and state food authorities.
+          </p>
+        </div>
       </div>
     </div>
   );

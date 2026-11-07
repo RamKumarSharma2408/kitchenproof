@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Lock, Mail, ArrowRight, UserCheck } from "lucide-react";
+import { ShieldCheck, Lock, Mail, ArrowRight, UserCheck, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,6 +11,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoRoleLoading, setDemoRoleLoading] = useState<string | null>(null);
+  const [showDemoPortals, setShowDemoPortals] = useState(true);
 
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -26,7 +28,7 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Login failed");
+        setError(data.error || "Login failed. Please check your credentials.");
         return;
       }
 
@@ -54,10 +56,50 @@ export default function LoginPage() {
     }
   };
 
-  const setDemoCredentials = (demoEmail: string, roleName: string) => {
-    setEmail(demoEmail);
-    setPassword("KitchenProof@123");
+  const handleInstantDemoLogin = async (demoEmail: string, roleKey: string) => {
+    setDemoRoleLoading(roleKey);
     setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: demoEmail,
+          password: "KitchenProof@123", // Injected programmatically for test mode without plain-text display
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        // Fallback prefill if needed
+        setEmail(demoEmail);
+        setPassword("KitchenProof@123");
+        setError(data.error || "Authentication issue");
+        return;
+      }
+
+      switch (data.user.role) {
+        case "ADMIN":
+          router.push("/dashboard/admin");
+          break;
+        case "INSPECTOR":
+          router.push("/dashboard/inspector");
+          break;
+        case "RESTAURANT_OWNER":
+          router.push("/dashboard/owner");
+          break;
+        case "CONSUMER":
+        default:
+          router.push("/dashboard/consumer");
+          break;
+      }
+      router.refresh();
+    } catch {
+      setError("Failed to sign in to evaluation portal.");
+    } finally {
+      setDemoRoleLoading(null);
+    }
   };
 
   return (
@@ -75,52 +117,92 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* 1-Click Evaluation Credentials for Testing */}
+      {/* Evaluation & Demonstration Portals */}
       <div className="bg-[#F5F5F0] p-4 rounded-xl border border-[#E7E7DE] space-y-3">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#143D2B] flex items-center gap-1.5">
-          <UserCheck className="w-3.5 h-3.5" />
-          <span>One-Click Demonstration Logins:</span>
-        </span>
-        <div className="grid grid-cols-2 gap-2 text-[11px]">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#143D2B] flex items-center gap-1.5">
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>Interactive Evaluation Portals</span>
+          </span>
           <button
             type="button"
-            onClick={() => setDemoCredentials("rahul.consumer@example.com", "Consumer")}
-            className="p-2 bg-white rounded border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors"
+            onClick={() => setShowDemoPortals(!showDemoPortals)}
+            className="text-[#868A85] hover:text-[#161815] text-[10px] flex items-center gap-0.5"
           >
-            <strong className="block text-[#161815]">Consumer</strong>
-            <span className="text-[#868A85] text-[10px]">Rahul Verma</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setDemoCredentials("priya.owner@example.com", "Owner")}
-            className="p-2 bg-white rounded border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors"
-          >
-            <strong className="block text-[#161815]">Restaurant Owner</strong>
-            <span className="text-[#868A85] text-[10px]">Priya Sundaram</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setDemoCredentials("dr.anil.inspector@example.com", "Inspector")}
-            className="p-2 bg-white rounded border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors"
-          >
-            <strong className="block text-[#161815]">Auditor / Inspector</strong>
-            <span className="text-[#868A85] text-[10px]">Dr. Anil Sharma</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setDemoCredentials("admin@kitchenproof.in", "Admin")}
-            className="p-2 bg-white rounded border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors"
-          >
-            <strong className="block text-[#161815]">Platform Admin</strong>
-            <span className="text-[#868A85] text-[10px]">Rajeshwar S.</span>
+            {showDemoPortals ? (
+              <>
+                <span>Hide</span>
+                <ChevronUp className="w-3 h-3" />
+              </>
+            ) : (
+              <>
+                <span>Show</span>
+                <ChevronDown className="w-3 h-3" />
+              </>
+            )}
           </button>
         </div>
-        <p className="text-[10px] text-[#868A85] text-center">
-          Click any role above to prefill credentials (password: <code>KitchenProof@123</code>).
-        </p>
+
+        {showDemoPortals && (
+          <>
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("rahul.consumer@example.com", "consumer")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Consumer</strong>
+                  {demoRoleLoading === "consumer" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Rahul Verma (Watchlist & Reports)</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("priya.owner@example.com", "owner")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Kitchen Owner</strong>
+                  {demoRoleLoading === "owner" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Priya Sundaram (Doc Vault & QR)</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("dr.anil.inspector@example.com", "inspector")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Certified Inspector</strong>
+                  {demoRoleLoading === "inspector" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Dr. Anil Sharma (Audit Scoring)</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("admin@kitchenproof.in", "admin")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Platform Admin</strong>
+                  {demoRoleLoading === "admin" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Rajeshwar S. (Governance & Logs)</span>
+              </button>
+            </div>
+            <p className="text-[10px] text-[#868A85] text-center">
+              Click any portal above to sign in instantly with simulated role credentials.
+            </p>
+          </>
+        )}
       </div>
 
       {/* Main Login Form */}
@@ -142,8 +224,8 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+              placeholder="you@example.com"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] placeholder:text-[#868A85] focus:border-[#143D2B]"
             />
           </div>
         </div>
@@ -160,7 +242,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full pl-9 pr-3 py-2 text-xs rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] placeholder:text-[#868A85] focus:border-[#143D2B]"
             />
           </div>
         </div>
@@ -168,22 +250,20 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 rounded-lg bg-[#143D2B] text-white text-xs font-semibold hover:bg-[#1F593F] transition-all flex items-center justify-center gap-2"
+          className="w-full py-2.5 bg-[#143D2B] text-white rounded-lg text-xs font-semibold hover:bg-[#0D281C] transition-colors flex items-center justify-center gap-1.5"
         >
-          <span>{loading ? "Authenticating..." : "Sign In"}</span>
+          <span>{loading ? "Authenticating..." : "Sign In to Portal"}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
-
-        <div className="text-center pt-2">
-          <Link
-            href="/register"
-            className="text-xs text-[#5E635D] hover:text-[#143D2B] underline"
-          >
-            Don&apos;t have an account? Register here
-          </Link>
-        </div>
       </form>
+
+      {/* Footer link to register */}
+      <div className="text-center text-xs text-[#5E635D]">
+        <span>Are you a food business operator? </span>
+        <Link href="/register" className="font-semibold text-[#143D2B] underline">
+          Register your kitchen
+        </Link>
+      </div>
     </div>
   );
 }
-
