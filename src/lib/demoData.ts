@@ -535,3 +535,4 @@ export const DEMO_METRICS = {
   totalInspections: 12,
   expiredLicenses: 1,
 };
+
