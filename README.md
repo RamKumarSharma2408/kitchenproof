@@ -80,7 +80,7 @@ $$\text{Safety Score} = \sum_{i=1}^{5} \left( \frac{\text{Score Obtained}_i}{\te
 
 ### 2. Clone and Install
 ```bash
-git clone https://github.com/ramsharma4u/kitchenproof.git
+git clone https://github.com/RamKumarSharma2408/kitchenproof.git
 cd kitchenproof
 npm install
 ```
@@ -170,3 +170,4 @@ KitchenProof is engineered for zero-cost deployment on the Vercel Hobby Tier:
 ## 📄 License
 
 Licensed under the [MIT License](LICENSE).
+
