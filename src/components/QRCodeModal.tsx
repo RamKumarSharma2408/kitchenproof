@@ -168,3 +168,4 @@ export default function QRCodeModal({ isOpen, onClose, restaurant }: QRCodeModal
     </div>
   );
 }
+

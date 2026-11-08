@@ -91,3 +91,4 @@ export default function DocumentList({ documents, restaurantName }: DocumentList
     </div>
   );
 }
+

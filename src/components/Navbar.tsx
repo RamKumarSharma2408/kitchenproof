@@ -58,20 +58,10 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#FBFBF9]/90 backdrop-blur-md border-b border-[#E7E7DE]">
-      {/* Statutory & Demo Notification Bar */}
-      <div className="bg-[#143D2B] text-[#DCE9E0] px-4 py-1.5 text-xs text-center font-medium tracking-wide flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-        <div className="flex items-center gap-1.5">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span><strong>KitchenProof</strong> National Transparency Platform (FSSAI Schedule 4 Aligned)</span>
-        </div>
-        <div className="hidden sm:flex items-center gap-3 text-[11px] text-[#A3C9B2]">
-          <span className="text-[#5D9C75]">|</span>
-          <span className="text-[#DCE9E0] font-semibold">Demo Portals:</span>
-          <Link href="/dashboard/consumer" className="hover:text-white underline">Consumer</Link>
-          <Link href="/dashboard/owner" className="hover:text-white underline">Kitchen Owner</Link>
-          <Link href="/dashboard/inspector" className="hover:text-white underline">Auditor</Link>
-          <Link href="/dashboard/admin" className="hover:text-white underline">Governance</Link>
-        </div>
+      {/* Platform Transparency Banner */}
+      <div className="bg-[#143D2B] text-[#DCE9E0] px-4 py-1.5 text-xs text-center font-medium tracking-wide flex items-center justify-center gap-2">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>Independent Kitchen Safety Transparency • Evidence-Based Hygiene Intelligence</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

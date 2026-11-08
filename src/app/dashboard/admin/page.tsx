@@ -20,9 +20,13 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const realSession = await getSession();
-  const isDemoMode = !realSession || realSession.role !== "ADMIN";
-  const session = realSession && realSession.role === "ADMIN" ? realSession : DEMO_USERS.admin;
+  const session = await getSession();
+  if (!session) {
+    redirect("/login?error=unauthorized&callbackUrl=/dashboard/admin");
+  }
+  if (session.role !== "ADMIN") {
+    redirect("/dashboard/consumer?error=forbidden");
+  }
 
   let totalRestaurants = DEMO_METRICS.totalRestaurants;
   let verifiedRestaurants = DEMO_METRICS.verifiedRestaurants;
@@ -132,6 +136,8 @@ export default async function AdminDashboardPage() {
       },
     ];
   }
+
+  const isDemoMode = session?.email === "admin@kitchenproof.in" || auditLogs.length === 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">

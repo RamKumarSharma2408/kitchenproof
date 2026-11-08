@@ -45,7 +45,7 @@ export default async function HomePage() {
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0F6F2] border border-[#B8D4C2] text-xs font-semibold text-[#143D2B]">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#143D2B]" />
-                <span>The National Kitchen Hygiene Transparency Index</span>
+                <span>Independent Kitchen Safety Transparency Platform</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#161815] tracking-tight leading-[1.12]">
@@ -77,16 +77,16 @@ export default async function HomePage() {
               {/* Trust Indicators */}
               <div className="pt-6 border-t border-[#E7E7DE] grid grid-cols-3 gap-4 text-xs text-[#5E635D]">
                 <div>
-                  <strong className="block text-lg font-serif font-black text-[#161815]">100%</strong>
-                  <span>Evidence-Backed Records</span>
+                  <strong className="block text-lg font-serif font-black text-[#161815]">Audited</strong>
+                  <span>Laboratory & Test Records</span>
                 </div>
                 <div>
-                  <strong className="block text-lg font-serif font-black text-[#161815]">Schedule 4</strong>
-                  <span>FSSAI Hygiene Aligned</span>
+                  <strong className="block text-lg font-serif font-black text-[#161815]">Codex &amp; FSSAI</strong>
+                  <span>Hygiene Benchmarks</span>
                 </div>
                 <div>
                   <strong className="block text-lg font-serif font-black text-[#161815]">Zero</strong>
-                  <span>Paid Verification Influence</span>
+                  <span>Commercial Influence</span>
                 </div>
               </div>
             </div>
@@ -123,7 +123,7 @@ export default async function HomePage() {
                       <span>KitchenProof Verified Profile</span>
                     </div>
                     <span className="bg-[#143D2B] text-white font-bold text-xs px-2 py-0.5 rounded">
-                      94/100 Safety
+                      92/100 Safety Index
                     </span>
                   </div>
 
@@ -291,14 +291,14 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
               <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-                Transparent Methodology v1.2
+                Transparent Methodology v2.0
               </span>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight">
                 No black-box algorithms. <br />
                 Every point is tied to verified evidence.
               </h2>
               <p className="text-sm text-[#DCE9E0] leading-relaxed max-w-xl">
-                KitchenProof does not generate random scores. The 100-point Kitchen Safety Index is mathematically computed across five weighted categories. Unverified claims and expired logs deplete data confidence.
+                KitchenProof does not generate random scores. The 100-point Kitchen Safety Index is mathematically computed across five weighted categories. Unverified claims and expired logs deplete evidence completeness.
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 text-xs">
@@ -352,10 +352,10 @@ export default async function HomePage() {
                 </ul>
 
                 <Link
-                  href="/how-it-works"
+                  href="/methodology"
                   className="block text-center w-full py-2.5 bg-white text-[#143D2B] rounded-lg text-xs font-semibold hover:bg-[#F0F6F2] transition-colors"
                 >
-                  Read Full Scoring Whitepaper →
+                  Read Full Scoring Methodology v2.0 →
                 </Link>
               </div>
             </div>

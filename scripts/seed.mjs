@@ -4,14 +4,15 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Starting KitchenProof database seed...");
+  console.log("🌱 Starting KitchenProof database seed (Methodology v2.0)...");
 
-  // Clean existing data
+  // Clean existing data in reverse relation order
   await prisma.auditLog.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.savedRestaurant.deleteMany();
   await prisma.consumerReport.deleteMany();
   await prisma.verificationRequest.deleteMany();
+  await prisma.dispute.deleteMany();
   await prisma.scoreHistory.deleteMany();
   await prisma.safetyAssessment.deleteMany();
   await prisma.inspectionCategory.deleteMany();
@@ -19,6 +20,7 @@ async function main() {
   await prisma.document.deleteMany();
   await prisma.kitchenProfile.deleteMany();
   await prisma.restaurant.deleteMany();
+  await prisma.physicalPremises.deleteMany();
   await prisma.user.deleteMany();
 
   const defaultPasswordHash = await bcrypt.hash("KitchenProof@123", 10);
@@ -70,17 +72,174 @@ async function main() {
 
   console.log("✅ Created 4 baseline users (Admin, Inspector, Owner, Consumer)");
 
-  // 2. Create Restaurants
-  const r1 = await prisma.restaurant.create({
+  // 2. Create Shared Physical Premises
+  const sharedPremisesBLR = await prisma.physicalPremises.create({
+    data: {
+      premisesCode: "PRM-BLR-004",
+      facilityName: "Curry & Roll Central Commissary Hub",
+      streetAddress: "Plot 44, 4th Cross, 5th Block",
+      locality: "Koramangala",
+      city: "Bengaluru",
+      state: "Karnataka",
+      postalCode: "560095",
+      facilityType: "CLOUD_KITCHEN_COMMISSARY",
+      totalPreparationArea: 2800,
+      waterSupplyType: "Commercial RO + UV Multi-Stage Filtration",
+      pestControlAgency: "Terminix SIS Commercial Solutions",
+      lastPestControlDate: new Date("2026-09-02"),
+      oilRecyclerContract: "Authorized Bio-Energy Partner Ltd",
+    },
+  });
+  console.log("✅ Created Shared Physical Premises (PRM-BLR-004)");
+
+  // 3. Create Kitchen 1: The Grand Horizon Kitchen (Exemplary Verified)
+  const rGrandHorizon = await prisma.restaurant.create({
+    data: {
+      name: "The Grand Horizon Kitchen",
+      slug: "the-grand-horizon-aerocity",
+      legalName: "Grand Horizon Hospitality Limited",
+      fssaiNumber: "KP-DEMO-133240010099",
+      fssaiType: "STATE_LICENSE",
+      fssaiValidUntil: new Date("2028-05-15"),
+      cuisine: "Continental, North Indian, Pan-Asian",
+      streetAddress: "Asset Area 4, Hospitality District, Aerocity",
+      locality: "Aerocity",
+      city: "New Delhi",
+      state: "Delhi",
+      postalCode: "110037",
+      phone: "+91 11 4987 6543",
+      email: "compliance@grandhorizon.in",
+      foodRating: 4.8,
+      totalReviews: 2840,
+      safetyScore: 92,
+      dataConfidenceScore: 98,
+      verificationStatus: "VERIFIED",
+      lastInspectedAt: new Date("2026-10-22"),
+      coverImageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+      isDemoData: true,
+      ownerId: ownerPriya.id,
+      kitchenProfile: {
+        create: {
+          kitchenType: "DINE_IN",
+          squareFootage: 2600,
+          foodHandlersCount: 22,
+          fostacSupervisorName: "Chef Rajeshwar Sengupta",
+          fostacCertNumber: "FOSTAC/DEL/2025/1199",
+          waterSource: "COMMERCIAL_RO",
+          pestControlAgency: "Rentokil PCI Pest Solutions",
+          lastPestControlDate: new Date("2026-10-12"),
+          oilDisposalMethod: "AUTHORIZED_RECYCLER",
+        },
+      },
+      documents: {
+        create: [
+          {
+            uploaderId: ownerPriya.id,
+            docType: "WATER_TEST_REPORT",
+            title: "IS 10500 Potable Water Bacteriological Test (NABL)",
+            fileName: "water_test_gh_oct2026.pdf",
+            fileUrl: "/docs/water_test_sample.pdf",
+            fileSize: 428000,
+            verificationStatus: "VERIFIED",
+            issueDate: new Date("2026-10-01"),
+            expiryDate: new Date("2027-04-01"),
+            notes: "NABL Laboratory Ref: DL-WT-2026-9042. All microbiological and heavy metal parameters compliant with IS 10500.",
+            verifiedById: inspector.id,
+            verifiedAt: new Date("2026-10-22"),
+          },
+          {
+            uploaderId: ownerPriya.id,
+            docType: "PEST_CONTROL_CONTRACT",
+            title: "Commercial Pest Management Service Record",
+            fileName: "rentokil_oct_service_gh.pdf",
+            fileUrl: "/docs/pest_control_sample.pdf",
+            fileSize: 285400,
+            verificationStatus: "VERIFIED",
+            issueDate: new Date("2026-10-12"),
+            expiryDate: new Date("2026-12-12"),
+            notes: "Quarterly commercial insect & rodent monitoring log. Service log signed by certified licensed applicator.",
+            verifiedById: inspector.id,
+            verifiedAt: new Date("2026-10-22"),
+          },
+        ],
+      },
+    },
+  });
+
+  const inspGH = await prisma.inspection.create({
+    data: {
+      restaurantId: rGrandHorizon.id,
+      inspectorId: inspector.id,
+      inspectionType: "SCHEDULED_COMPREHENSIVE",
+      status: "COMPLETED",
+      scheduledDate: new Date("2026-10-20"),
+      completedDate: new Date("2026-10-22"),
+      overallScore: 92,
+      hygieneRatingSmiles: 5,
+      findingsSummary: "Exemplary sanitary and documentation standards. NABL water lab tests confirmed potable. Color-coded prep stations and cold-chain logging verified fully compliant.",
+      categories: {
+        create: [
+          {
+            categoryKey: "HYGIENE_SANITATION",
+            name: "Hygiene & Sanitation",
+            weightPercent: 25,
+            scoreObtained: 94,
+            weightedScore: 23.5,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Hands-free sensor washbasins, continuous grease trap cleaning, stainless steel prep tables sanitised with food-grade disinfectants.",
+          },
+          {
+            categoryKey: "FOOD_HANDLING",
+            name: "Food Handling Practices",
+            weightPercent: 25,
+            scoreObtained: 92,
+            weightedScore: 23.0,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Clear color segregation for raw meats and ready-to-eat produce. Medical fitness certificates (Form IX) verified for all 22 kitchen staff.",
+          },
+          {
+            categoryKey: "PEST_MANAGEMENT",
+            name: "Pest Management",
+            weightPercent: 15,
+            scoreObtained: 90,
+            weightedScore: 13.5,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Monthly commercial contract with Rentokil PCI. Electronic insect killer units operational away from food prep.",
+          },
+          {
+            categoryKey: "TEMPERATURE_CONTROL",
+            name: "Temperature Control & Cold Chain",
+            weightPercent: 15,
+            scoreObtained: 92,
+            weightedScore: 13.8,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Walk-in chillers logged at 2.8°C; deep freezers at -20.4°C with digital telemetric alerts.",
+          },
+          {
+            categoryKey: "DOCUMENTATION_COMPLIANCE",
+            name: "Documentation & Regulatory Compliance",
+            weightPercent: 20,
+            scoreObtained: 92,
+            weightedScore: 18.4,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Active FSSAI State License valid to 2028. FoSTaC Food Safety Supervisor certificate verified.",
+          },
+        ],
+      },
+    },
+  });
+
+  // 4. Create Kitchen 2: Spice Pavilion (Good Kitchen with Expired Pest Documentation)
+  const rSpicePavilion = await prisma.restaurant.create({
     data: {
       name: "Spice Pavilion Fine Dining",
       slug: "spice-pavilion-connaught-place",
       legalName: "Spice Pavilion Hospitality Pvt Ltd",
-      fssaiNumber: "13324001000845",
+      fssaiNumber: "KP-DEMO-133240010084",
       fssaiType: "STATE_LICENSE",
       fssaiValidUntil: new Date("2027-08-15"),
       cuisine: "North Indian, Mughlai, Awadhi",
-      streetAddress: "M-42, Outer Circle, Connaught Place",
+      streetAddress: "M-42, Outer Circle",
       locality: "Connaught Place",
       city: "New Delhi",
       state: "Delhi",
@@ -89,9 +248,9 @@ async function main() {
       email: "contact@spicepavilion.in",
       foodRating: 4.6,
       totalReviews: 1240,
-      safetyScore: 94,
-      dataConfidenceScore: 98,
-      verificationStatus: "VERIFIED",
+      safetyScore: 78,
+      dataConfidenceScore: 82,
+      verificationStatus: "EXPIRED",
       lastInspectedAt: new Date("2026-10-18"),
       coverImageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
       isDemoData: true,
@@ -109,60 +268,132 @@ async function main() {
           oilDisposalMethod: "AUTHORIZED_RECYCLER",
         },
       },
-    },
-  });
-
-  const r2 = await prisma.restaurant.create({
-    data: {
-      name: "Dosa Heritage Kitchen",
-      slug: "dosa-heritage-indiranagar",
-      legalName: "South Legacy Foods LLP",
-      fssaiNumber: "11223334000412",
-      fssaiType: "STATE_LICENSE",
-      fssaiValidUntil: new Date("2027-04-30"),
-      cuisine: "South Indian, Karnataka, Kerala",
-      streetAddress: "742, 12th Main Road, HAL 2nd Stage, Indiranagar",
-      locality: "Indiranagar",
-      city: "Bengaluru",
-      state: "Karnataka",
-      postalCode: "560038",
-      phone: "+91 80 2521 9900",
-      email: "support@dosaheritage.com",
-      foodRating: 4.8,
-      totalReviews: 2450,
-      safetyScore: 88,
-      dataConfidenceScore: 92,
-      verificationStatus: "VERIFIED",
-      lastInspectedAt: new Date("2026-09-24"),
-      coverImageUrl: "https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=1200&q=80",
-      isDemoData: true,
-      ownerId: ownerPriya.id,
-      kitchenProfile: {
-        create: {
-          kitchenType: "DINE_IN",
-          squareFootage: 1400,
-          foodHandlersCount: 12,
-          fostacSupervisorName: "Praveen Kumar S",
-          fostacCertNumber: "FOSTAC/BLR/2025/1190",
-          waterSource: "MUNICIPAL_TESTED",
-          pestControlAgency: "Pestbusters India Pvt Ltd",
-          lastPestControlDate: new Date("2026-09-12"),
-          oilDisposalMethod: "BIO_DIESEL_COLLECTOR",
-        },
+      documents: {
+        create: [
+          {
+            uploaderId: ownerPriya.id,
+            docType: "WATER_TEST_REPORT",
+            title: "IS 10500 Potable Water Bacteriological Test",
+            fileName: "water_test_sept2026_nabl.pdf",
+            fileUrl: "/docs/water_test_sample.pdf",
+            fileSize: 342100,
+            verificationStatus: "VERIFIED",
+            issueDate: new Date("2026-09-15"),
+            expiryDate: new Date("2027-03-15"),
+            notes: "NABL Accredited Lab Ref: ND-WT-4412. Parameters compliant with BIS standards for food preparation. Valid until March 2027.",
+            verifiedById: inspector.id,
+            verifiedAt: new Date("2026-10-18"),
+          },
+          {
+            uploaderId: ownerPriya.id,
+            docType: "PEST_CONTROL_CONTRACT",
+            title: "Commercial Pest Management Service Record",
+            fileName: "rentokil_oct_service.pdf",
+            fileUrl: "/docs/pest_control_sample.pdf",
+            fileSize: 198400,
+            verificationStatus: "EXPIRED",
+            issueDate: new Date("2026-10-05"),
+            expiryDate: new Date("2026-11-05"), // Lapsed relative to Nov 2026 evaluation!
+            notes: "Monthly rodent and insect treatment log. Lapsed certificate. Validity ended 5 November 2026. Re-certification required.",
+            verifiedById: inspector.id,
+            verifiedAt: new Date("2026-10-18"),
+          },
+          {
+            uploaderId: ownerPriya.id,
+            docType: "FOSTAC_CERTIFICATE",
+            title: "FoSTaC Food Safety Supervisor Certification",
+            fileName: "fostac_supervisor_cert_2025.pdf",
+            fileUrl: "/docs/fostac_sample.pdf",
+            fileSize: 512000,
+            verificationStatus: "VERIFIED",
+            issueDate: new Date("2025-01-15"),
+            expiryDate: new Date("2028-01-15"),
+            notes: "Certificate ID: FOSTAC/DEL/2025/8842. Advance Catering Level 2 verified.",
+            verifiedById: inspector.id,
+            verifiedAt: new Date("2026-10-18"),
+          },
+        ],
       },
     },
   });
 
-  const r3 = await prisma.restaurant.create({
+  await prisma.inspection.create({
+    data: {
+      restaurantId: rSpicePavilion.id,
+      inspectorId: inspector.id,
+      inspectionType: "SCHEDULED_COMPREHENSIVE",
+      status: "COMPLETED",
+      scheduledDate: new Date("2026-10-17"),
+      completedDate: new Date("2026-10-18"),
+      overallScore: 78,
+      hygieneRatingSmiles: 4,
+      criticalViolationsCount: 0,
+      nonCriticalViolationsCount: 1,
+      findingsSummary: "Kitchen maintains solid sanitary standards and valid potable water testing. However, the commercial pest management service certificate expired on 5 November 2026. Lapsed service record requires renewal.",
+      correctiveActionsRequired: "Submit updated monthly pest control service log with certified applicator signature.",
+      categories: {
+        create: [
+          {
+            categoryKey: "HYGIENE_SANITATION",
+            name: "Hygiene & Sanitation",
+            weightPercent: 25,
+            scoreObtained: 94,
+            weightedScore: 23.5,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Foot-operated wash basins, automated soap dispensers, clean uniforms, and hair nets in full compliance.",
+          },
+          {
+            categoryKey: "FOOD_HANDLING",
+            name: "Food Handling Practices",
+            weightPercent: 25,
+            scoreObtained: 92,
+            weightedScore: 23.0,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Color-coded cutting boards (green veg, red raw meat, yellow poultry). FIFO stock rotation actively labeled.",
+          },
+          {
+            categoryKey: "PEST_MANAGEMENT",
+            name: "Pest Management",
+            weightPercent: 15,
+            scoreObtained: 25,
+            weightedScore: 3.75,
+            verificationStatus: "EXPIRED_EVIDENCE",
+            observations: "Pest control certificate expired on 5 November 2026. Score heavily capped at 25 points under KitchenProof Methodology v2.0.",
+          },
+          {
+            categoryKey: "TEMPERATURE_CONTROL",
+            name: "Temperature Control & Cold Chain",
+            weightPercent: 15,
+            scoreObtained: 90,
+            weightedScore: 13.5,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "Walk-in chillers logged at 3.2°C; hot-holding tables maintained above 68°C continuously.",
+          },
+          {
+            categoryKey: "DOCUMENTATION_COMPLIANCE",
+            name: "Documentation & Regulatory Compliance",
+            weightPercent: 20,
+            scoreObtained: 90,
+            weightedScore: 18.0,
+            verificationStatus: "VERIFIED_COMPLIANT",
+            observations: "FSSAI State License active and valid to August 2027. FoSTaC supervisor certificate verified.",
+          },
+        ],
+      },
+    },
+  });
+
+  // 5. Create Kitchen 3A: Biryani Cloud Box (Shared Cloud Kitchen Commissary)
+  const rBiryaniCloud = await prisma.restaurant.create({
     data: {
       name: "Biryani Cloud Box",
       slug: "biryani-cloud-box-koramangala",
       legalName: "Cloud Epicure Private Limited",
-      fssaiNumber: "11224002000991",
+      fssaiNumber: "KP-DEMO-112240020099",
       fssaiType: "STATE_LICENSE",
-      fssaiValidUntil: new Date("2026-12-31"),
+      fssaiValidUntil: new Date("2027-12-31"),
       cuisine: "Hyderabadi Biryani, Kebabs, Rolls",
-      streetAddress: "Plot 44, 4th Cross, 5th Block, Koramangala",
+      streetAddress: "Plot 44, 4th Cross, 5th Block",
       locality: "Koramangala",
       city: "Bengaluru",
       state: "Karnataka",
@@ -171,447 +402,224 @@ async function main() {
       email: "kitchen@biryanicloudbox.in",
       foodRating: 4.4,
       totalReviews: 890,
-      safetyScore: 76,
-      dataConfidenceScore: 78,
-      verificationStatus: "PENDING_REVIEW",
-      lastInspectedAt: new Date("2026-06-14"),
+      safetyScore: 84,
+      dataConfidenceScore: 88,
+      verificationStatus: "VERIFIED",
+      lastInspectedAt: new Date("2026-09-14"),
       coverImageUrl: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=80",
       isDemoData: true,
       ownerId: ownerPriya.id,
+      premisesId: sharedPremisesBLR.id,
       kitchenProfile: {
         create: {
           kitchenType: "CLOUD_KITCHEN",
-          squareFootage: 950,
-          foodHandlersCount: 8,
+          squareFootage: 2800,
+          foodHandlersCount: 14,
           fostacSupervisorName: "Imran Pasha",
           fostacCertNumber: "FOSTAC/BLR/2024/7321",
           waterSource: "COMMERCIAL_RO",
           pestControlAgency: "Terminix SIS India",
-          lastPestControlDate: new Date("2026-05-30"),
+          lastPestControlDate: new Date("2026-09-02"),
           oilDisposalMethod: "AUTHORIZED_RECYCLER",
         },
       },
     },
   });
 
-  const r4 = await prisma.restaurant.create({
+  // 6. Create Kitchen 3B: Curry Express Cloud Kitchen (Hosted on Same Commissary)
+  const rCurryExpress = await prisma.restaurant.create({
     data: {
-      name: "Tandoor & Curry Co.",
-      slug: "tandoor-curry-co-bandra",
-      legalName: "Bandra Coastal Gourmet LLP",
-      fssaiNumber: "11523005001287",
+      name: "Curry Express Cloud Kitchen",
+      slug: "curry-express-koramangala",
+      legalName: "Cloud Epicure Private Limited",
+      fssaiNumber: "KP-DEMO-112240020102",
       fssaiType: "STATE_LICENSE",
-      fssaiValidUntil: new Date("2027-11-20"),
-      cuisine: "North Indian, Seafood, Mughlai",
-      streetAddress: "32, Hill Road, Opposite St. Peter's Church, Bandra West",
+      fssaiValidUntil: new Date("2027-12-31"),
+      cuisine: "North Indian Curries, Dal Makhani, Naan",
+      streetAddress: "Plot 44, 4th Cross, 5th Block",
+      locality: "Koramangala",
+      city: "Bengaluru",
+      state: "Karnataka",
+      postalCode: "560095",
+      phone: "+91 80 4120 4456",
+      email: "curryexpress@cloudepicure.in",
+      foodRating: 4.3,
+      totalReviews: 610,
+      safetyScore: 82,
+      dataConfidenceScore: 85,
+      verificationStatus: "VERIFIED",
+      lastInspectedAt: new Date("2026-09-14"),
+      coverImageUrl: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=1200&q=80",
+      isDemoData: true,
+      ownerId: ownerPriya.id,
+      premisesId: sharedPremisesBLR.id,
+      kitchenProfile: {
+        create: {
+          kitchenType: "CLOUD_KITCHEN",
+          squareFootage: 2800,
+          foodHandlersCount: 14,
+          fostacSupervisorName: "Imran Pasha",
+          fostacCertNumber: "FOSTAC/BLR/2024/7321",
+          waterSource: "COMMERCIAL_RO",
+          pestControlAgency: "Terminix SIS India",
+          lastPestControlDate: new Date("2026-09-02"),
+          oilDisposalMethod: "AUTHORIZED_RECYCLER",
+        },
+      },
+    },
+  });
+
+  // 7. Create Kitchen 4: Street Bites & Tandoor (Flagged with Active Critical Violation)
+  const rStreetBites = await prisma.restaurant.create({
+    data: {
+      name: "Street Bites & Tandoor",
+      slug: "street-bites-tandoor-mumbai",
+      legalName: "Coastal Street Ventures LLP",
+      fssaiNumber: "KP-DEMO-115230050012",
+      fssaiType: "STATE_LICENSE",
+      fssaiValidUntil: new Date("2027-03-30"),
+      cuisine: "Street Food, Tandoori, Kebabs",
+      streetAddress: "Shop 8, Hill Road, Bandra West",
       locality: "Bandra West",
       city: "Mumbai",
       state: "Maharashtra",
       postalCode: "400050",
-      phone: "+91 22 2640 1122",
-      email: "manager@tandoorcurry.co",
-      foodRating: 4.5,
-      totalReviews: 1820,
-      safetyScore: 82,
-      dataConfidenceScore: 88,
-      verificationStatus: "VERIFIED",
-      lastInspectedAt: new Date("2026-08-10"),
-      coverImageUrl: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=1200&q=80",
-      isDemoData: true,
-      kitchenProfile: {
-        create: {
-          kitchenType: "DINE_IN",
-          squareFootage: 1600,
-          foodHandlersCount: 14,
-          fostacSupervisorName: "Sameer Deshmukh",
-          fostacCertNumber: "FOSTAC/MUM/2025/3309",
-          waterSource: "MUNICIPAL_TESTED",
-          pestControlAgency: "Godrej Pest Control",
-          lastPestControlDate: new Date("2026-07-28"),
-          oilDisposalMethod: "AUTHORIZED_RECYCLER",
-        },
-      },
-    },
-  });
-
-  const r5 = await prisma.restaurant.create({
-    data: {
-      name: "Chai & Samosa Junction",
-      slug: "chai-samosa-junction-cyber-city",
-      legalName: "Quick Bite Retail Ventures",
-      fssaiNumber: "10824003000554",
-      fssaiType: "REGISTRATION",
-      fssaiValidUntil: new Date("2026-11-30"),
-      cuisine: "Street Food, Chai, Snacks",
-      streetAddress: "Kiosk 12, Food Court, DLF Cyber City",
-      locality: "DLF Cyber City",
-      city: "Gurugram",
-      state: "Haryana",
-      postalCode: "122002",
-      phone: "+91 124 405 9988",
-      email: "hello@chaisamosajunction.com",
-      foodRating: 4.2,
-      totalReviews: 620,
-      safetyScore: 64,
-      dataConfidenceScore: 70,
+      phone: "+91 22 2640 9876",
+      email: "manager@streetbites.co",
+      foodRating: 4.1,
+      totalReviews: 940,
+      safetyScore: 42,
+      dataConfidenceScore: 65,
       verificationStatus: "ACTION_REQUIRED",
-      lastInspectedAt: new Date("2026-07-02"),
+      lastInspectedAt: new Date("2026-10-30"),
       coverImageUrl: "https://images.unsplash.com/photo-1505253758473-96b3015f21c9?auto=format&fit=crop&w=1200&q=80",
       isDemoData: true,
+      ownerId: ownerPriya.id,
       kitchenProfile: {
         create: {
           kitchenType: "QUICK_SERVICE",
-          squareFootage: 450,
-          foodHandlersCount: 4,
-          fostacSupervisorName: "Ramesh Chand",
-          fostacCertNumber: "FOSTAC/GGN/2024/9912",
-          waterSource: "COMMERCIAL_RO",
-          pestControlAgency: "Local Pest Control",
-          lastPestControlDate: new Date("2026-06-20"),
-          oilDisposalMethod: "AUTHORIZED_RECYCLER",
-        },
-      },
-    },
-  });
-
-  const r6 = await prisma.restaurant.create({
-    data: {
-      name: "Green Leaf Pure Veg",
-      slug: "green-leaf-pure-veg-jubilee-hills",
-      legalName: "Satvik Culinary Creations",
-      fssaiNumber: "13623001000778",
-      fssaiType: "STATE_LICENSE",
-      fssaiValidUntil: new Date("2028-02-28"),
-      cuisine: "Pure Vegetarian, Gujarati, Thali",
-      streetAddress: "Road No. 36, CBI Colony, Jubilee Hills",
-      locality: "Jubilee Hills",
-      city: "Hyderabad",
-      state: "Telangana",
-      postalCode: "500033",
-      phone: "+91 40 2355 7788",
-      email: "namaste@greenleafveg.in",
-      foodRating: 4.7,
-      totalReviews: 3100,
-      safetyScore: 91,
-      dataConfidenceScore: 95,
-      verificationStatus: "VERIFIED",
-      lastInspectedAt: new Date("2026-10-10"),
-      coverImageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
-      isDemoData: true,
-      kitchenProfile: {
-        create: {
-          kitchenType: "DINE_IN",
-          squareFootage: 2100,
-          foodHandlersCount: 18,
-          fostacSupervisorName: "Venkat Rao K",
-          fostacCertNumber: "FOSTAC/HYD/2025/4410",
-          waterSource: "COMMERCIAL_RO",
-          pestControlAgency: "Rentokil PCI",
-          lastPestControlDate: new Date("2026-09-30"),
-          oilDisposalMethod: "BIO_DIESEL_COLLECTOR",
-        },
-      },
-    },
-  });
-
-  const r7 = await prisma.restaurant.create({
-    data: {
-      name: "Old Delhi Zaika Express",
-      slug: "old-delhi-zaika-express-chandni-chowk",
-      legalName: "Zaika Heritage Foods",
-      fssaiNumber: "13324004000192",
-      fssaiType: "REGISTRATION",
-      fssaiValidUntil: new Date("2027-01-15"),
-      cuisine: "Mughlai, Kebabs, Parathas",
-      streetAddress: "Shop 14, Gali Paranthe Wali, Chandni Chowk",
-      locality: "Chandni Chowk",
-      city: "New Delhi",
-      state: "Delhi",
-      postalCode: "110006",
-      phone: "+91 11 2326 5544",
-      email: "info@olddelhizaika.com",
-      foodRating: 4.3,
-      totalReviews: 1540,
-      safetyScore: 0,
-      dataConfidenceScore: 25,
-      verificationStatus: "UNVERIFIED",
-      lastInspectedAt: null,
-      coverImageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
-      isDemoData: true,
-      kitchenProfile: {
-        create: {
-          kitchenType: "QUICK_SERVICE",
-          squareFootage: 520,
+          squareFootage: 650,
           foodHandlersCount: 6,
-          fostacSupervisorName: null,
-          fostacCertNumber: null,
+          fostacSupervisorName: "Sunil G. Kamble",
+          fostacCertNumber: "FOSTAC/MUM/2024/2209",
           waterSource: "MUNICIPAL_TESTED",
-          pestControlAgency: null,
-          lastPestControlDate: null,
-          oilDisposalMethod: null,
-        },
-      },
-    },
-  });
-
-  const r8 = await prisma.restaurant.create({
-    data: {
-      name: "Royal Awadh Cloud Kitchen",
-      slug: "royal-awadh-cloud-kitchen-pune",
-      legalName: "Nawab Flavours Kitchens Pvt Ltd",
-      fssaiNumber: "11524007000881",
-      fssaiType: "STATE_LICENSE",
-      fssaiValidUntil: new Date("2026-10-01"), // Expired licence
-      cuisine: "Biryani, Rolls, North Indian",
-      streetAddress: "Industrial Estate, Unit 4, Kothrud",
-      locality: "Kothrud",
-      city: "Pune",
-      state: "Maharashtra",
-      postalCode: "411038",
-      phone: "+91 20 2544 3322",
-      email: "ops@royalawadhcloud.com",
-      foodRating: 3.9,
-      totalReviews: 480,
-      safetyScore: 48,
-      dataConfidenceScore: 85,
-      verificationStatus: "EXPIRED",
-      lastInspectedAt: new Date("2026-05-18"),
-      coverImageUrl: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80",
-      isDemoData: true,
-      kitchenProfile: {
-        create: {
-          kitchenType: "CLOUD_KITCHEN",
-          squareFootage: 800,
-          foodHandlersCount: 7,
-          fostacSupervisorName: "Farhan Ansari",
-          fostacCertNumber: "FOSTAC/PUN/2023/1102",
-          waterSource: "BOREWELL_PURIFIED",
-          pestControlAgency: "City Pest Control",
-          lastPestControlDate: new Date("2026-04-12"),
+          pestControlAgency: "Local Commercial Pest Care",
+          lastPestControlDate: new Date("2026-08-15"),
           oilDisposalMethod: "AUTHORIZED_RECYCLER",
         },
       },
     },
   });
 
-  console.log("✅ Seeded 8 restaurants across Delhi, Bengaluru, Mumbai, Gurugram, Hyderabad, Pune");
-
-  // 3. Add Verified Inspection to Spice Pavilion (r1)
-  const insp1 = await prisma.inspection.create({
+  await prisma.inspection.create({
     data: {
-      restaurantId: r1.id,
+      restaurantId: rStreetBites.id,
       inspectorId: inspector.id,
-      inspectionType: "ROUTINE_HYGIENE",
+      inspectionType: "UNANNOUNCED_RISK_AUDIT",
       status: "COMPLETED",
-      scheduledDate: new Date("2026-10-15"),
-      completedDate: new Date("2026-10-18"),
-      overallScore: 94,
-      hygieneRatingSmiles: 5,
-      criticalViolationsCount: 0,
-      nonCriticalViolationsCount: 1,
-      findingsSummary:
-        "Kitchen demonstrates exemplary standards of hygiene, cross-contamination control, and temperature logging. Commercial RO water tested compliant with IS 10500. Medical records of all 16 food handlers up to date.",
-      correctiveActionsRequired:
-        "Ensure gasket seal on secondary under-counter freezer unit B2 is cleaned twice weekly.",
+      scheduledDate: new Date("2026-10-30"),
+      completedDate: new Date("2026-10-30"),
+      overallScore: 42,
+      hygieneRatingSmiles: 1,
+      criticalViolationsCount: 2,
+      nonCriticalViolationsCount: 3,
+      findingsSummary: "CRITICAL NON-COMPLIANCE: Walk-in refrigerator running at 11.8°C. Marinated raw poultry held in danger zone. Insect light unit non-functional with insect activity observed near dry store.",
+      correctiveActionsRequired: "Repair compressor unit immediately, discard affected meat inventory, conduct deep fumigation within 72 hours.",
       categories: {
         create: [
           {
             categoryKey: "HYGIENE_SANITATION",
             name: "Hygiene & Sanitation",
             weightPercent: 25,
-            scoreObtained: 96,
-            weightedScore: 24.0,
-            verificationStatus: "VERIFIED_COMPLIANT",
-            observations: "Spotless stainless-steel prep surfaces; automated handwashing stations in active use.",
+            scoreObtained: 52,
+            weightedScore: 13.0,
+            verificationStatus: "MINOR_NON_COMPLIANCE",
+            observations: "Floor drain traps clogged; handwash sink blocked by inventory crates.",
           },
           {
             categoryKey: "FOOD_HANDLING",
             name: "Food Handling Practices",
             weightPercent: 25,
-            scoreObtained: 95,
-            weightedScore: 23.75,
-            verificationStatus: "VERIFIED_COMPLIANT",
-            observations: "Strict separation of vegetarian and non-vegetarian preparation tables; complete PPE worn.",
+            scoreObtained: 45,
+            weightedScore: 11.25,
+            verificationStatus: "MINOR_NON_COMPLIANCE",
+            observations: "Raw chicken handled without gloves; shared cutting boards observed.",
           },
           {
             categoryKey: "PEST_MANAGEMENT",
             name: "Pest Management",
             weightPercent: 15,
-            scoreObtained: 92,
-            weightedScore: 13.8,
-            verificationStatus: "VERIFIED_COMPLIANT",
-            observations: "Rentokil monthly report verified; insect light traps cleared and positioned correctly.",
+            scoreObtained: 20,
+            weightedScore: 3.0,
+            verificationStatus: "CRITICAL_NON_COMPLIANCE",
+            observations: "Insect ingress detected. Broken door weather seal. Fly killer inactive.",
           },
           {
             categoryKey: "TEMPERATURE_CONTROL",
-            name: "Temperature Control",
+            name: "Temperature Control & Cold Chain",
             weightPercent: 15,
-            scoreObtained: 90,
-            weightedScore: 13.5,
-            verificationStatus: "VERIFIED_COMPLIANT",
-            observations: "Digital dataloggers verified in walk-in chillers (3.2°C) and blast freezer (-21°C).",
+            scoreObtained: 20,
+            weightedScore: 3.0,
+            verificationStatus: "CRITICAL_NON_COMPLIANCE",
+            observations: "CRITICAL: Refrigerator core temperature 11.8°C. Meat held in bacterial multiplication danger zone.",
           },
           {
             categoryKey: "DOCUMENTATION_COMPLIANCE",
-            name: "Documentation & Compliance",
+            name: "Documentation & Regulatory Compliance",
             weightPercent: 20,
-            scoreObtained: 95,
-            weightedScore: 19.0,
-            verificationStatus: "VERIFIED_COMPLIANT",
-            observations: "State License valid; purple Food Safety Display Board clearly mounted; FoSTaC supervisor present.",
+            scoreObtained: 65,
+            weightedScore: 13.0,
+            verificationStatus: "MINOR_NON_COMPLIANCE",
+            observations: "License active but twice-daily temperature logs not maintained since 12 October.",
           },
         ],
       },
     },
   });
 
-  // Documents for Spice Pavilion
-  await prisma.document.createMany({
-    data: [
-      {
-        restaurantId: r1.id,
-        uploaderId: ownerPriya.id,
-        docType: "FSSAI_CERTIFICATE",
-        title: "FSSAI State License Certificate (13324001000845)",
-        fileName: "fssai_license_spice_pavilion.pdf",
-        fileUrl: "/demo-docs/fssai_cert_13324001000845.pdf",
-        fileSize: 420000,
-        issueDate: new Date("2024-08-16"),
-        expiryDate: new Date("2027-08-15"),
-        verificationStatus: "VERIFIED",
-        verifiedById: inspector.id,
-        verifiedAt: new Date("2026-10-18"),
-        notes: "Verified against FSSAI FoSCoS portal database.",
-      },
-      {
-        restaurantId: r1.id,
-        uploaderId: ownerPriya.id,
-        docType: "WATER_TEST_REPORT",
-        title: "Potable Water Microbiological Test (IS 10500)",
-        fileName: "water_test_q3_2026.pdf",
-        fileUrl: "/demo-docs/water_test_q3_2026.pdf",
-        fileSize: 310000,
-        issueDate: new Date("2026-09-01"),
-        expiryDate: new Date("2027-03-01"),
-        verificationStatus: "VERIFIED",
-        verifiedById: inspector.id,
-        verifiedAt: new Date("2026-10-18"),
-        notes: "NABL accredited lab report. Coliforms: Absent, pH: 7.2.",
-      },
-      {
-        restaurantId: r1.id,
-        uploaderId: ownerPriya.id,
-        docType: "PEST_CONTROL_LOG",
-        title: "Monthly Pest Eradication Service Certificate",
-        fileName: "rentokil_pci_oct_2026.pdf",
-        fileUrl: "/demo-docs/rentokil_oct_2026.pdf",
-        fileSize: 180000,
-        issueDate: new Date("2026-10-05"),
-        expiryDate: new Date("2026-11-05"),
-        verificationStatus: "VERIFIED",
-        verifiedById: inspector.id,
-        verifiedAt: new Date("2026-10-18"),
-        notes: "Cockroach gel treatment & rodent perimeter baiting verified.",
-      },
-      {
-        restaurantId: r1.id,
-        uploaderId: ownerPriya.id,
-        docType: "FOSTAC_CERTIFICATE",
-        title: "Food Safety Supervisor Certification (Advance Catering)",
-        fileName: "fostac_cert_vroy.pdf",
-        fileUrl: "/demo-docs/fostac_cert_vroy.pdf",
-        fileSize: 290000,
-        issueDate: new Date("2025-01-10"),
-        expiryDate: new Date("2027-01-09"),
-        verificationStatus: "VERIFIED",
-        verifiedById: inspector.id,
-        verifiedAt: new Date("2026-10-18"),
-        notes: "Supervisor Vikramaditya Roy actively on-duty.",
-      },
-    ],
-  });
-
-  // Safety assessments for Spice Pavilion
-  await prisma.safetyAssessment.createMany({
-    data: [
-      {
-        restaurantId: r1.id,
-        categoryKey: "HYGIENE_SANITATION",
-        title: "Potable Water Testing (IS 10500)",
-        standardRequired: "Bacteriological and chemical test every 6 months",
-        currentStatus: "COMPLIANT",
-        confidenceWeight: 100,
-      },
-      {
-        restaurantId: r1.id,
-        categoryKey: "FOOD_HANDLING",
-        title: "Medical Fitness Form IX for Food Handlers",
-        standardRequired: "Annual physical exam, deworming, typhoid vaccine",
-        currentStatus: "COMPLIANT",
-        confidenceWeight: 100,
-      },
-      {
-        restaurantId: r1.id,
-        categoryKey: "PEST_MANAGEMENT",
-        title: "Integrated Pest Management (IPM) Log",
-        standardRequired: "Continuous contract with licensed pest agency",
-        currentStatus: "COMPLIANT",
-        confidenceWeight: 100,
-      },
-      {
-        restaurantId: r1.id,
-        categoryKey: "TEMPERATURE_CONTROL",
-        title: "Chiller and Freezer Temperature Monitoring",
-        standardRequired: "Twice daily recorded digital log ≤ 4°C and ≤ -18°C",
-        currentStatus: "COMPLIANT",
-        confidenceWeight: 95,
-      },
-      {
-        restaurantId: r1.id,
-        categoryKey: "DOCUMENTATION_COMPLIANCE",
-        title: "FSSAI License Display on Purple FSDB",
-        standardRequired: "Mandatory prominent display with consumer feedback info",
-        currentStatus: "COMPLIANT",
-        confidenceWeight: 100,
-      },
-    ],
-  });
-
-  // 4. Consumer Saved Restaurant & Concern
-  await prisma.savedRestaurant.create({
+  // 8. Create Kitchen 5: Golden Wok Express (Self-Reported Unverified Kitchen)
+  await prisma.restaurant.create({
     data: {
-      userId: consumerRahul.id,
-      restaurantId: r1.id,
+      name: "Golden Wok Express",
+      slug: "golden-wok-express-gurugram",
+      legalName: "Quick Wok Retailers LLP",
+      fssaiNumber: "KP-DEMO-108240030005",
+      fssaiType: "REGISTRATION",
+      fssaiValidUntil: new Date("2027-01-20"),
+      cuisine: "Pan-Asian, Noodles, Momos",
+      streetAddress: "Kiosk 12, Food Court, DLF Cyber City",
+      locality: "DLF Cyber City",
+      city: "Gurugram",
+      state: "Haryana",
+      postalCode: "122002",
+      phone: "+91 124 405 9988",
+      email: "hello@goldenwokexpress.com",
+      foodRating: 4.2,
+      totalReviews: 620,
+      safetyScore: 48,
+      dataConfidenceScore: 28,
+      verificationStatus: "SELF_REPORTED",
+      lastInspectedAt: null,
+      coverImageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      isDemoData: true,
+      ownerId: ownerPriya.id,
+      kitchenProfile: {
+        create: {
+          kitchenType: "QUICK_SERVICE",
+          squareFootage: 450,
+          foodHandlersCount: 4,
+          fostacSupervisorName: null,
+          fostacCertNumber: null,
+          waterSource: "COMMERCIAL_RO",
+          pestControlAgency: "Self-Managed",
+          lastPestControlDate: null,
+          oilDisposalMethod: "AUTHORIZED_RECYCLER",
+        },
+      },
     },
   });
 
-  await prisma.consumerReport.create({
-    data: {
-      restaurantId: r5.id, // Chai & Samosa Junction
-      reporterId: consumerRahul.id,
-      reporterName: "Rahul Verma",
-      reporterEmail: "rahul.consumer@example.com",
-      issueType: "POOR_HYGIENE",
-      description:
-        "Observed repetitive reuse of frying oil that appeared dark and viscous without periodic polar testing.",
-      incidentDate: new Date("2026-10-22"),
-      status: "UNDER_INVESTIGATION",
-      resolutionNotes: "Assigned to regional verification officer for oil TPC audit.",
-    },
-  });
-
-  // 5. Verification Request for Biryani Cloud Box (r3)
-  await prisma.verificationRequest.create({
-    data: {
-      restaurantId: r3.id,
-      requestedById: ownerPriya.id,
-      status: "PENDING",
-      requestNotes:
-        "We have upgraded our ventilation ducting and renewed our quarterly water analysis. Requesting fresh inspection to improve verified safety badge.",
-    },
-  });
-
-  console.log("✅ Seed completed successfully!");
+  console.log("✅ Seed completed successfully! 5 distinct realistic kitchens with physical premises seeded.");
 }
 
 main()
@@ -622,4 +630,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

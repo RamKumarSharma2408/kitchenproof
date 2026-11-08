@@ -19,9 +19,10 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function ConsumerDashboard() {
-  const realSession = await getSession();
-  const isDemoMode = !realSession;
-  const session = realSession || DEMO_USERS.consumer;
+  const session = await getSession();
+  if (!session) {
+    redirect("/login?error=unauthorized&callbackUrl=/dashboard/consumer");
+  }
 
   let saved: any[] = [];
   let reports: any[] = [];
@@ -102,6 +103,8 @@ export default async function ConsumerDashboard() {
       },
     ];
   }
+
+  const isDemoMode = session?.email === "rahul.consumer@example.com" || (saved.length === 0 && reports.length === 0);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">

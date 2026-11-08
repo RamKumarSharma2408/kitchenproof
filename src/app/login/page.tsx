@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [demoRoleLoading, setDemoRoleLoading] = useState<string | null>(null);
-  const [showDemoPortals, setShowDemoPortals] = useState(true);
+  const [showDemoPortals, setShowDemoPortals] = useState(false);
 
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -66,13 +66,12 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: demoEmail,
-          password: "KitchenProof@123", // Injected programmatically for test mode without plain-text display
+          password: "KitchenProof@123",
         }),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        // Fallback prefill if needed
         setEmail(demoEmail);
         setPassword("KitchenProof@123");
         setError(data.error || "Authentication issue");
@@ -115,94 +114,6 @@ export default function LoginPage() {
         <p className="text-xs text-[#5E635D]">
           Access your transparent food safety portal & dashboard
         </p>
-      </div>
-
-      {/* Evaluation & Demonstration Portals */}
-      <div className="bg-[#F5F5F0] p-4 rounded-xl border border-[#E7E7DE] space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#143D2B] flex items-center gap-1.5">
-            <UserCheck className="w-3.5 h-3.5" />
-            <span>Interactive Evaluation Portals</span>
-          </span>
-          <button
-            type="button"
-            onClick={() => setShowDemoPortals(!showDemoPortals)}
-            className="text-[#868A85] hover:text-[#161815] text-[10px] flex items-center gap-0.5"
-          >
-            {showDemoPortals ? (
-              <>
-                <span>Hide</span>
-                <ChevronUp className="w-3 h-3" />
-              </>
-            ) : (
-              <>
-                <span>Show</span>
-                <ChevronDown className="w-3 h-3" />
-              </>
-            )}
-          </button>
-        </div>
-
-        {showDemoPortals && (
-          <>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("rahul.consumer@example.com", "consumer")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Consumer</strong>
-                  {demoRoleLoading === "consumer" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Rahul Verma (Watchlist & Reports)</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("priya.owner@example.com", "owner")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Kitchen Owner</strong>
-                  {demoRoleLoading === "owner" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Priya Sundaram (Doc Vault & QR)</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("dr.anil.inspector@example.com", "inspector")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Certified Inspector</strong>
-                  {demoRoleLoading === "inspector" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Dr. Anil Sharma (Audit Scoring)</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("admin@kitchenproof.in", "admin")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Platform Admin</strong>
-                  {demoRoleLoading === "admin" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Rajeshwar S. (Governance & Logs)</span>
-              </button>
-            </div>
-            <p className="text-[10px] text-[#868A85] text-center">
-              Click any portal above to sign in instantly with simulated role credentials.
-            </p>
-          </>
-        )}
       </div>
 
       {/* Main Login Form */}
@@ -263,6 +174,94 @@ export default function LoginPage() {
         <Link href="/register" className="font-semibold text-[#143D2B] underline">
           Register your kitchen
         </Link>
+      </div>
+
+      {/* Developer & Auditor Simulation Sandbox */}
+      <div className="bg-[#F5F5F0] p-4 rounded-xl border border-dashed border-[#D0D0C3] space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#143D2B] flex items-center gap-1.5">
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>Auditor & Evaluation Simulation Sandbox</span>
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowDemoPortals(!showDemoPortals)}
+            className="text-[#868A85] hover:text-[#161815] text-[10px] flex items-center gap-0.5"
+          >
+            {showDemoPortals ? (
+              <>
+                <span>Collapse</span>
+                <ChevronUp className="w-3 h-3" />
+              </>
+            ) : (
+              <>
+                <span>Expand</span>
+                <ChevronDown className="w-3 h-3" />
+              </>
+            )}
+          </button>
+        </div>
+
+        {showDemoPortals && (
+          <>
+            <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("rahul.consumer@example.com", "consumer")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Consumer Role</strong>
+                  {demoRoleLoading === "consumer" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Rahul Verma (Watchlist & Reports)</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("priya.owner@example.com", "owner")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Kitchen Owner Role</strong>
+                  {demoRoleLoading === "owner" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Priya Sundaram (Doc Vault & QR)</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("dr.anil.inspector@example.com", "inspector")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Certified Inspector</strong>
+                  {demoRoleLoading === "inspector" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Dr. Anil Sharma (Audit Scoring)</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={!!demoRoleLoading}
+                onClick={() => handleInstantDemoLogin("admin@kitchenproof.in", "admin")}
+                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between">
+                  <strong className="text-[#161815]">Platform Admin</strong>
+                  {demoRoleLoading === "admin" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
+                </div>
+                <span className="text-[#868A85] text-[10px] block mt-0.5">Rajeshwar S. (Governance & Logs)</span>
+              </button>
+            </div>
+            <p className="text-[10px] text-[#868A85] text-center pt-1">
+              Test mode only: simulated accounts for exploring role interfaces without manual credential entry.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

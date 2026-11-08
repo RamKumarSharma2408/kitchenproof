@@ -122,11 +122,11 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                 </div>
               </div>
 
-              {/* Data Confidence Pill */}
+              {/* Evidence Completeness Pill */}
               <div className="text-right">
-                <span className="text-[10px] text-[#868A85] block">Data Quality</span>
+                <span className="text-[10px] text-[#868A85] block">Evidence</span>
                 <span className="text-xs font-semibold text-[#161815]">
-                  {restaurant.dataConfidenceScore}% Confident
+                  {restaurant.dataConfidenceScore}% Complete
                 </span>
               </div>
             </div>

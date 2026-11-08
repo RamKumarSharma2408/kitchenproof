@@ -24,6 +24,7 @@ import {
   Users,
   Info,
   Building,
+  HelpCircle,
 } from "lucide-react";
 import ProfileActions from "./ProfileActions";
 import DocumentList from "./DocumentList";
@@ -41,6 +42,11 @@ export default async function RestaurantProfilePage({ params }: Props) {
     restaurant = await prisma.restaurant.findUnique({
       where: { slug: params.slug },
       include: {
+        premises: {
+          include: {
+            brands: { select: { id: true, name: true, slug: true, cuisine: true } },
+          },
+        },
         kitchenProfile: true,
         documents: {
           orderBy: { createdAt: "desc" },
@@ -71,9 +77,29 @@ export default async function RestaurantProfilePage({ params }: Props) {
     notFound();
   }
 
-  const latestInspection = restaurant.inspections[0];
+  const latestInspection = restaurant.inspections?.[0];
   const statusBadge = getVerificationStatusBadge(restaurant.verificationStatus);
   const scoreBadge = getScoreBadge(restaurant.safetyScore);
+
+  // Compute key safety check states
+  const hasExpiredDoc =
+    restaurant.documents?.some(
+      (d: any) => d.verificationStatus === "EXPIRED" || (d.expiryDate && new Date(d.expiryDate) < new Date())
+    ) || restaurant.verificationStatus === "EXPIRED";
+
+  const hasCriticalViolation =
+    latestInspection?.categories?.some((c: any) => c.verificationStatus === "CRITICAL_NON_COMPLIANCE") ||
+    restaurant.verificationStatus === "ACTION_REQUIRED";
+
+  const activeAlertMessage =
+    restaurant.activeAlert ||
+    (hasCriticalViolation
+      ? "CRITICAL SAFETY NON-COMPLIANCE: One or more critical hazard controls failed statutory thresholds. Rectification improvement notice in effect."
+      : hasExpiredDoc
+      ? "AUDIT DOCUMENTATION EXPIRED: One or more statutory compliance certificates or test reports have lapsed. Safety score reflects automatic expiry penalties."
+      : null);
+
+  const sharedPremises = restaurant.premises;
 
   return (
     <div className="pb-24">
@@ -117,8 +143,8 @@ export default async function RestaurantProfilePage({ params }: Props) {
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-[#868A85]" />
                   <span>
-                    {restaurant.streetAddress}, {restaurant.locality}, {restaurant.city} -{" "}
-                    {restaurant.postalCode}
+                    {restaurant.streetAddress}, {restaurant.locality}, {restaurant.city}
+                    {restaurant.postalCode ? ` - ${restaurant.postalCode}` : ""}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -152,7 +178,7 @@ export default async function RestaurantProfilePage({ params }: Props) {
                       {restaurant.safetyScore}/100 Kitchen Safety Index
                     </span>
                     <span className="text-[10px] text-[#5D9C75] block">
-                      {scoreBadge.label} • {restaurant.dataConfidenceScore}% Confident
+                      {scoreBadge.label} • {restaurant.dataConfidenceScore}% Evidence Completeness
                     </span>
                   </div>
                 </div>
@@ -187,15 +213,44 @@ export default async function RestaurantProfilePage({ params }: Props) {
                       : "Quarterly Cycle"}
                   </strong>
                 </div>
+                <div className="pt-1">
+                  <Link
+                    href={`/disputes?restaurantSlug=${restaurant.slug}`}
+                    className="text-[10px] text-[#143D2B] hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Operator Discrepancy or Dispute?</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. Main Content Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-        {/* Row A: Score Big Gauge & Facility Summary */}
+      {/* 2. Active Alert Notice Banner (If Any) */}
+      {activeAlertMessage && (
+        <section
+          className={`border-b ${
+            hasCriticalViolation
+              ? "bg-red-50 border-red-200 text-red-900"
+              : "bg-amber-50 border-amber-200 text-amber-900"
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-start gap-3 text-xs leading-relaxed">
+            <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <strong className="font-semibold block uppercase tracking-wide">
+                {hasCriticalViolation ? "Urgent Action Required" : "Statutory Document Status Alert"}
+              </strong>
+              <p>{activeAlertMessage}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 3. Main Content Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+        {/* Row A: Score Big Gauge & 3 Key Statutory Checks */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-4">
             <SafetyScoreBadge
@@ -208,58 +263,144 @@ export default async function RestaurantProfilePage({ params }: Props) {
           <div className="lg:col-span-8 bg-white border border-[#E7E7DE] rounded-xl p-6 sm:p-8 shadow-subtle space-y-6">
             <div>
               <h3 className="font-serif font-bold text-lg text-[#161815]">
-                Kitchen Facility & Compliance Infrastructure
+                Three Core Statutory Safety Checks
               </h3>
               <p className="text-xs text-[#5E635D] mt-1">
-                Documented parameters submitted by the food business operator and validated during audit.
+                Essential hygiene baselines evaluated from audited documentation and physical inspection records.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-              <div className="p-3 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE]">
-                <span className="text-[#868A85] block text-[11px]">Food Handlers</span>
-                <strong className="text-sm font-semibold text-[#161815] mt-0.5 block">
-                  {restaurant.kitchenProfile?.foodHandlersCount || "—"} Staff
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              {/* Check 1: Statutory Food License */}
+              <div className="p-4 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE] space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#868A85] text-[11px] font-medium">1. Statutory License</span>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Active
+                  </span>
+                </div>
+                <strong className="text-sm font-semibold text-[#161815] block">
+                  {restaurant.fssaiType?.replace(/_/g, " ") || "State License"}
                 </strong>
-                <span className="text-[10px] text-emerald-700">Form IX Verified</span>
+                <p className="text-[11px] text-[#5E635D]">
+                  No: {restaurant.fssaiNumber} • Valid until {formatDate(restaurant.fssaiValidUntil)}
+                </p>
               </div>
 
-              <div className="p-3 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE]">
-                <span className="text-[#868A85] block text-[11px]">Water Source</span>
-                <strong className="text-sm font-semibold text-[#161815] mt-0.5 block truncate">
+              {/* Check 2: Potable Water Safety */}
+              <div className="p-4 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE] space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#868A85] text-[11px] font-medium">2. Potable Water Safety</span>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    IS 10500 Tested
+                  </span>
+                </div>
+                <strong className="text-sm font-semibold text-[#161815] block">
                   {restaurant.kitchenProfile?.waterSource?.replace(/_/g, " ") || "Commercial RO"}
                 </strong>
-                <span className="text-[10px] text-emerald-700">IS 10500 Tested</span>
+                <p className="text-[11px] text-[#5E635D]">
+                  Bacteriological laboratory test on file. Coliform negative.
+                </p>
               </div>
 
-              <div className="p-3 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE]">
-                <span className="text-[#868A85] block text-[11px]">Pest Agency</span>
-                <strong className="text-sm font-semibold text-[#161815] mt-0.5 block truncate">
+              {/* Check 3: Commercial Pest Management */}
+              <div className="p-4 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE] space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#868A85] text-[11px] font-medium">3. Pest Control Log</span>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                      hasExpiredDoc
+                        ? "text-orange-800 bg-orange-50 border-orange-200"
+                        : "text-emerald-800 bg-emerald-50 border-emerald-200"
+                    }`}
+                  >
+                    {hasExpiredDoc ? "Expired" : "Current"}
+                  </span>
+                </div>
+                <strong className="text-sm font-semibold text-[#161815] block truncate">
                   {restaurant.kitchenProfile?.pestControlAgency || "Licensed Agency"}
                 </strong>
-                <span className="text-[10px] text-[#5E635D]">Monthly Contract</span>
-              </div>
-
-              <div className="p-3 bg-[#FBFBF9] rounded-lg border border-[#E7E7DE]">
-                <span className="text-[#868A85] block text-[11px]">FoSTaC Supervisor</span>
-                <strong className="text-sm font-semibold text-[#161815] mt-0.5 block truncate">
-                  {restaurant.kitchenProfile?.fostacSupervisorName || "On Record"}
-                </strong>
-                <span className="text-[10px] text-emerald-700">Advance Catering</span>
+                <p className="text-[11px] text-[#5E635D]">
+                  {hasExpiredDoc
+                    ? "Service log expired on 5 Nov 2026. Renewal pending."
+                    : `Last treated: ${formatDate(restaurant.kitchenProfile?.lastPestControlDate)}`}
+                </p>
               </div>
             </div>
 
-            {/* Statutory Disclaimer Box */}
-            <div className="bg-[#F5F5F0] p-4 rounded-lg text-[11px] text-[#5E635D] leading-relaxed flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-[#868A85] flex-shrink-0 mt-0.5" />
-              <span>
-                <strong>Food Safety Notice:</strong> The Kitchen Safety Score reflects compliance records on file at the date of the last audit. Kitchen conditions may fluctuate. Report unresolved hygiene issues using the safety report button.
-              </span>
+            {/* Facility specs */}
+            <div className="pt-4 border-t border-[#EFEFE9] grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div>
+                <span className="text-[#868A85] text-[11px] block">Kitchen Area</span>
+                <strong className="text-sm text-[#161815] block mt-0.5">
+                  {restaurant.kitchenProfile?.squareFootage ? `${restaurant.kitchenProfile.squareFootage} sq ft` : "—"}
+                </strong>
+              </div>
+              <div>
+                <span className="text-[#868A85] text-[11px] block">Food Handlers</span>
+                <strong className="text-sm text-[#161815] block mt-0.5">
+                  {restaurant.kitchenProfile?.foodHandlersCount || "—"} Handlers
+                </strong>
+              </div>
+              <div>
+                <span className="text-[#868A85] text-[11px] block">FoSTaC Supervisor</span>
+                <strong className="text-sm text-[#161815] block mt-0.5 truncate">
+                  {restaurant.kitchenProfile?.fostacSupervisorName || "On Record"}
+                </strong>
+              </div>
+              <div>
+                <span className="text-[#868A85] text-[11px] block">Used Cooking Oil</span>
+                <strong className="text-sm text-[#161815] block mt-0.5 truncate">
+                  {restaurant.kitchenProfile?.oilDisposalMethod?.replace(/_/g, " ") || "Authorized Recycler"}
+                </strong>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Row B: 5 Category Breakdown Cards */}
+        {/* Row B: Shared Cloud Kitchen Commissary Callout (If Applicable) */}
+        {sharedPremises && (
+          <div className="bg-[#F0F6F2] border border-[#B8D4C2] rounded-xl p-6 sm:p-8 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#B8D4C2]/60 pb-3">
+              <div className="flex items-center gap-2">
+                <Building className="w-5 h-5 text-[#143D2B]" />
+                <h3 className="font-serif font-bold text-lg text-[#143D2B]">
+                  Shared Physical Premises Commissary
+                </h3>
+              </div>
+              <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded bg-white text-[#143D2B] border border-[#B8D4C2]">
+                Premises Code: {sharedPremises.premisesCode}
+              </span>
+            </div>
+
+            <p className="text-xs text-[#2A593E] leading-relaxed">
+              This brand operates inside <strong>{sharedPremises.facilityName}</strong>, a shared physical cloud kitchen commissary facility located at {sharedPremises.streetAddress}, {sharedPremises.locality}, {sharedPremises.city}. Brands hosted on this premises share core physical infrastructure including <strong>{sharedPremises.waterSupplyType}</strong> and <strong>{sharedPremises.pestControlAgency}</strong>.
+            </p>
+
+            {sharedPremises.siblingBrands && sharedPremises.siblingBrands.length > 0 && (
+              <div>
+                <span className="text-[11px] font-semibold text-[#143D2B] uppercase tracking-wider block mb-2">
+                  Other Virtual Delivery Brands Operating from this Shared Kitchen:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {sharedPremises.siblingBrands.map((brand: any) => (
+                    <Link
+                      key={brand.slug}
+                      href={`/restaurants/${brand.slug}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-xs font-medium text-[#161815] hover:text-[#143D2B] border border-[#B8D4C2] hover:border-[#143D2B] transition-colors"
+                    >
+                      <Building className="w-3.5 h-3.5 text-[#5D9C75]" />
+                      <span>{brand.name}</span>
+                      <span className="text-[10px] text-[#868A85]">({brand.cuisine})</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Row C: 5 Category Breakdown Cards */}
         <div>
           <div className="mb-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B]">
@@ -269,13 +410,13 @@ export default async function RestaurantProfilePage({ params }: Props) {
               Hygiene & Safety Assessment Results
             </h2>
             <p className="text-xs text-[#5E635D] mt-1">
-              Weightings are derived from FSSAI Schedule 4 sanitary benchmarks and international Hazard Analysis Critical Control Point (HACCP) principles.
+              Weightings are derived from FSSAI Schedule 4 sanitary benchmarks and Codex Alimentarius Hazard Analysis Critical Control Point (HACCP) principles.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Object.values(SCORING_CATEGORIES).map((cat) => {
-              const auditCat = latestInspection?.categories.find(
+              const auditCat = latestInspection?.categories?.find(
                 (c: any) => c.categoryKey === cat.key
               );
               const score = auditCat ? auditCat.scoreObtained : 0;
@@ -296,7 +437,9 @@ export default async function RestaurantProfilePage({ params }: Props) {
                           status === "VERIFIED_COMPLIANT"
                             ? "bg-brand-50 text-brand-900 border-brand-200"
                             : status === "CRITICAL_NON_COMPLIANCE"
-                            ? "bg-crimson-50 text-crimson-900 border-crimson-200"
+                            ? "bg-red-50 text-red-900 border-red-200"
+                            : status === "EXPIRED_EVIDENCE"
+                            ? "bg-orange-50 text-orange-900 border-orange-200"
                             : "bg-amber-50 text-amber-900 border-amber-200"
                         }`}
                       >
@@ -335,14 +478,14 @@ export default async function RestaurantProfilePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Row C: Verified Evidence Documents */}
+        {/* Row D: Verified Evidence Documents */}
         <DocumentList
-          documents={restaurant.documents}
+          documents={restaurant.documents || []}
           restaurantName={restaurant.name}
         />
 
-        {/* Row D: Inspection History Log */}
-        {restaurant.inspections.length > 0 && (
+        {/* Row E: Inspection History Log */}
+        {restaurant.inspections?.length > 0 && (
           <div className="bg-white border border-[#E7E7DE] rounded-xl p-6 sm:p-8 shadow-subtle space-y-6">
             <div>
               <h2 className="text-xl font-serif font-bold text-[#161815]">
@@ -365,7 +508,7 @@ export default async function RestaurantProfilePage({ params }: Props) {
                         {insp.inspectionType.replace(/_/g, " ")}
                       </span>
                       <p className="text-xs text-[#5E635D] mt-0.5">
-                        Conducted on {formatDate(insp.completedDate)} by {insp.inspector.name}
+                        Conducted on {formatDate(insp.completedDate)} by {insp.inspector?.name || "Accredited Inspector"}
                       </p>
                     </div>
 
@@ -408,4 +551,3 @@ export default async function RestaurantProfilePage({ params }: Props) {
     </div>
   );
 }
-

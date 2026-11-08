@@ -59,6 +59,8 @@ model Restaurant {
   updatedAt            DateTime  @updatedAt
 
   owner                User?                 @relation("OwnerRestaurants", fields: [ownerId], references: [id])
+  premisesId           String?
+  premises             PhysicalPremises?     @relation("PremisesBrands", fields: [premisesId], references: [id])
   kitchenProfile       KitchenProfile?
   documents            Document[]
   inspections          Inspection[]
@@ -67,6 +69,9 @@ model Restaurant {
   verificationRequests VerificationRequest[]
   consumerReports      ConsumerReport[]
   savedByUsers         SavedRestaurant[]
+  disputes             Dispute[]
+
+  @@index([premisesId])
 
   @@index([city, locality])
   @@index([verificationStatus])
@@ -276,4 +281,46 @@ model AuditLog {
   @@index([entityType, entityId])
   @@index([createdAt])
 }
+
+model PhysicalPremises {
+  id                   String       @id @default(cuid())
+  premisesCode         String       @unique // e.g. "PRM-DEL-001"
+  facilityName         String
+  streetAddress        String
+  locality             String
+  city                 String
+  state                String       @default("Delhi")
+  postalCode           String?
+  facilityType         String       @default("STANDALONE_COMMERCIAL_KITCHEN") // STANDALONE_COMMERCIAL_KITCHEN, CLOUD_KITCHEN_COMMISSARY, FOOD_COURT_COMMISSARY
+  totalPreparationArea Int?         // sq ft
+  waterSupplyType      String?      // COMMERCIAL_RO, MUNICIPAL_LINE, BOREWELL_PURIFIED
+  pestControlAgency    String?
+  lastPestControlDate  DateTime?
+  oilRecyclerContract  String?
+  brands               Restaurant[] @relation("PremisesBrands")
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  @@index([city, locality])
+}
+
+model Dispute {
+  id                 String     @id @default(cuid())
+  restaurantId       String
+  requesterId        String?
+  disputeType        String     // INCORRECT_INSPECTION_NOTE, WRONG_EXPIRY_DATE, LAB_TEST_DISCREPANCY, UNJUSTIFIED_FLAG
+  subject            String
+  explanation        String
+  supportingDocName  String?
+  status             String     @default("OPEN") // OPEN, UNDER_REVIEW, RESOLVED_CORRECTED, DISMISSED
+  reviewerNotes      String?
+  resolvedAt         DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  restaurant         Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, status])
+}
+
 

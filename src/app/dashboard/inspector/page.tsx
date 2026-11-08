@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -7,11 +8,13 @@ import InspectorClient from "./InspectorClient";
 export const dynamic = "force-dynamic";
 
 export default async function InspectorDashboardPage() {
-  const realSession = await getSession();
-  const isDemoMode = !realSession || (realSession.role !== "INSPECTOR" && realSession.role !== "ADMIN");
-  const session = realSession && (realSession.role === "INSPECTOR" || realSession.role === "ADMIN")
-    ? realSession
-    : DEMO_USERS.inspector;
+  const session = await getSession();
+  if (!session) {
+    redirect("/login?error=unauthorized&callbackUrl=/dashboard/inspector");
+  }
+  if (session.role !== "INSPECTOR" && session.role !== "ADMIN") {
+    redirect("/dashboard/consumer?error=forbidden");
+  }
 
   let pendingRequests: any[] = [];
   let restaurants: any[] = [];
@@ -159,6 +162,8 @@ export default async function InspectorDashboardPage() {
       },
     ];
   }
+
+  const isDemoMode = session?.email === "dr.anil.inspector@example.com" || pendingRequests.length === 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">

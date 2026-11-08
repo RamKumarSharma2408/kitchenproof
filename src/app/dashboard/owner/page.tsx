@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -7,11 +8,13 @@ import OwnerClient from "./OwnerClient";
 export const dynamic = "force-dynamic";
 
 export default async function OwnerDashboardPage() {
-  const realSession = await getSession();
-  const isDemoMode = !realSession || (realSession.role !== "RESTAURANT_OWNER" && realSession.role !== "ADMIN");
-  const session = realSession && (realSession.role === "RESTAURANT_OWNER" || realSession.role === "ADMIN")
-    ? realSession
-    : DEMO_USERS.owner;
+  const session = await getSession();
+  if (!session) {
+    redirect("/login?error=unauthorized&callbackUrl=/dashboard/owner");
+  }
+  if (session.role !== "RESTAURANT_OWNER" && session.role !== "ADMIN") {
+    redirect("/dashboard/consumer?error=forbidden");
+  }
 
   let restaurants: any[] = [];
 
@@ -57,6 +60,8 @@ export default async function OwnerDashboardPage() {
       },
     ];
   }
+
+  const isDemoMode = session?.email === "priya.owner@example.com" || restaurants.some((r: any) => r.isDemoData);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">

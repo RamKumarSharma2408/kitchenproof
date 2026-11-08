@@ -65,18 +65,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/disputes" className="hover:text-white transition-colors">
+                  Operator Dispute & Rectification Portal
+                </Link>
+              </li>
+              <li>
                 <Link href="/for-restaurants#compliance-toolkit" className="hover:text-white transition-colors">
                   Hygiene Checklist & Toolkit
                 </Link>
               </li>
               <li>
                 <Link href="/login" className="hover:text-white transition-colors">
-                  Restaurant Owner Login
-                </Link>
-              </li>
-              <li>
-                <Link href="/login" className="hover:text-white transition-colors">
-                  Accredited Inspector Portal
+                  Operator Login & Verification
                 </Link>
               </li>
             </ul>
@@ -102,14 +102,17 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-[#1E4F32] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#8CBA9D]">
           <p>© {new Date().getFullYear()} KitchenProof Technologies India. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link href="/about#terms" className="hover:text-white transition-colors">
+            <Link href="/terms" className="hover:text-white transition-colors">
               Terms of Transparency
             </Link>
-            <Link href="/about#privacy" className="hover:text-white transition-colors">
+            <Link href="/privacy" className="hover:text-white transition-colors">
               Data Privacy & Redaction
             </Link>
-            <Link href="/about" className="hover:text-white transition-colors">
-              Methodology v1.2
+            <Link href="/methodology" className="hover:text-white transition-colors">
+              Methodology v2.0
+            </Link>
+            <Link href="/disputes" className="hover:text-white transition-colors">
+              Disputes Portal
             </Link>
           </div>
         </div>

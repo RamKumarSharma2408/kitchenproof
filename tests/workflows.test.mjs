@@ -430,4 +430,103 @@ test("KitchenProof Comprehensive Verification & Production Test Suite (15 Journe
     const consumer = await prisma.user.findFirst({ where: { role: "CONSUMER" } });
     assert.notEqual(consumer.role, "RESTAURANT_OWNER", "Consumer role must not equal Owner role");
   });
+
+  // 16. Critical Control Gates Engine Enforcement
+  await t.test("16. Critical Control Gates mathematically enforce strict score ceilings", async () => {
+    // A. Missing License Gate: even with 100 on other categories, overall score <= 40
+    const licenseMissingInput = [
+      { categoryKey: "HYGIENE_SANITATION", scoreObtained: 100, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "FOOD_HANDLING", scoreObtained: 100, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "PEST_MANAGEMENT", scoreObtained: 100, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "TEMPERATURE_CONTROL", scoreObtained: 100, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "DOCUMENTATION_COMPLIANCE", scoreObtained: 0, verificationStatus: "CRITICAL_NON_COMPLIANCE", isStatutoryLicenseMissing: true },
+    ];
+    const resA = calculateSafetyScore(licenseMissingInput);
+    assert.equal(resA.overallScore, 40, "Missing license must cap score at 40");
+    assert.equal(resA.verificationLevel, "ACTION_REQUIRED");
+    assert.equal(resA.isPassingGrade, false);
+
+    // B. Cold Chain Breach Gate: walk-in chiller temperature violation
+    const coldChainInput = [
+      { categoryKey: "HYGIENE_SANITATION", scoreObtained: 95, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "FOOD_HANDLING", scoreObtained: 95, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "PEST_MANAGEMENT", scoreObtained: 95, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "TEMPERATURE_CONTROL", scoreObtained: 20, verificationStatus: "CRITICAL_NON_COMPLIANCE", isColdChainBreached: true },
+      { categoryKey: "DOCUMENTATION_COMPLIANCE", scoreObtained: 95, verificationStatus: "VERIFIED_COMPLIANT" },
+    ];
+    const resB = calculateSafetyScore(coldChainInput);
+    assert.equal(resB.overallScore, 45, "Severe cold chain breach must cap score at 45");
+    assert.equal(resB.verificationLevel, "ACTION_REQUIRED");
+  });
+
+  // 17. Decoupled Verification Levels and Performance Bands
+  await t.test("17. Verification levels and performance bands decouple correctly", async () => {
+    // 5 categories independently verified
+    const fullyVerified = [
+      { categoryKey: "HYGIENE_SANITATION", scoreObtained: 94, verificationStatus: "INDEPENDENTLY_VERIFIED" },
+      { categoryKey: "FOOD_HANDLING", scoreObtained: 92, verificationStatus: "INDEPENDENTLY_VERIFIED" },
+      { categoryKey: "PEST_MANAGEMENT", scoreObtained: 90, verificationStatus: "INDEPENDENTLY_VERIFIED" },
+      { categoryKey: "TEMPERATURE_CONTROL", scoreObtained: 92, verificationStatus: "INDEPENDENTLY_VERIFIED" },
+      { categoryKey: "DOCUMENTATION_COMPLIANCE", scoreObtained: 92, verificationStatus: "VERIFIED_AT_SOURCE" },
+    ];
+    const resFV = calculateSafetyScore(fullyVerified);
+    assert.equal(resFV.verificationLevel, "FULLY_VERIFIED");
+    assert.equal(resFV.performanceBand, "EXCELLENT");
+    assert.ok(resFV.evidenceCompleteness >= 95);
+
+    // High scores, but 1 expired document -> CONDITIONALLY_VERIFIED
+    const conditionallyVerified = [
+      { categoryKey: "HYGIENE_SANITATION", scoreObtained: 94, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "FOOD_HANDLING", scoreObtained: 92, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "PEST_MANAGEMENT", scoreObtained: 25, verificationStatus: "EXPIRED_EVIDENCE" },
+      { categoryKey: "TEMPERATURE_CONTROL", scoreObtained: 90, verificationStatus: "VERIFIED_COMPLIANT" },
+      { categoryKey: "DOCUMENTATION_COMPLIANCE", scoreObtained: 90, verificationStatus: "VERIFIED_COMPLIANT" },
+    ];
+    const resCV = calculateSafetyScore(conditionallyVerified);
+    assert.equal(resCV.verificationLevel, "CONDITIONALLY_VERIFIED");
+    assert.equal(resCV.performanceBand, "GOOD");
+    assert.ok(resCV.criticalFlags.some((f) => f.includes("Expired")));
+  });
+
+  // 18. Shared Physical Premises Commissary Relationship
+  await t.test("18. Shared Physical Premises connects virtual brands to common infrastructure", async () => {
+    const premises = await prisma.physicalPremises.findUnique({
+      where: { premisesCode: "PRM-BLR-004" },
+      include: { brands: true },
+    });
+
+    assert.ok(premises, "Shared premises PRM-BLR-004 must exist");
+    assert.equal(premises.facilityType, "CLOUD_KITCHEN_COMMISSARY");
+    assert.ok(premises.brands.length >= 2, "Must host at least 2 virtual brands");
+    const brandNames = premises.brands.map((b) => b.name);
+    assert.ok(brandNames.includes("Biryani Cloud Box"));
+    assert.ok(brandNames.includes("Curry Express Cloud Kitchen"));
+  });
+
+  // 19. Operator Dispute & Rectification Logging
+  await t.test("19. Food Business Operator dispute submission stores and tracks cases", async () => {
+    const restaurant = await prisma.restaurant.findFirst({
+      where: { slug: "spice-pavilion-connaught-place" },
+    });
+    assert.ok(restaurant);
+
+    const dispute = await prisma.dispute.create({
+      data: {
+        restaurantId: restaurant.id,
+        disputeType: "WRONG_EXPIRY_DATE",
+        subject: "Renewed pest control contract submitted",
+        explanation: "Pest control contract was renewed on 6 Nov 2026 with Rentokil. Log uploaded.",
+        supportingDocName: "rentokil_service_nov2026.pdf",
+        status: "OPEN",
+      },
+    });
+
+    assert.ok(dispute.id);
+    assert.equal(dispute.status, "OPEN");
+
+    const count = await prisma.dispute.count({
+      where: { restaurantId: restaurant.id },
+    });
+    assert.ok(count >= 1);
+  });
 });
