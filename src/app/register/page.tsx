@@ -58,16 +58,16 @@ function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleRegister} className="bg-white p-6 sm:p-8 rounded-xl border border-[#E7E7DE] shadow-subtle space-y-4 text-xs">
+    <form onSubmit={handleRegister} className="bg-surface p-6 sm:p-8 rounded-xl border border-border-subtle shadow-subtle space-y-4 text-xs">
       {error && (
-        <div className="p-3 bg-red-50 text-red-800 rounded border border-red-200">
+        <div className="p-3 bg-surface-raised text-danger rounded border border-danger/30">
           {error}
         </div>
       )}
 
       {/* Role toggle */}
       <div>
-        <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1.5">
+        <label className="block font-semibold tracking-wider text-text-muted mb-1.5">
           I Am Registering As:
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -76,12 +76,12 @@ function RegisterForm() {
             onClick={() => setRole("CONSUMER")}
             className={`p-2.5 rounded-lg border text-left transition-all ${
               role === "CONSUMER"
-                ? "bg-[#F0F6F2] border-[#143D2B] text-[#143D2B] font-semibold"
-                : "bg-white border-[#D0D0C3] text-[#5E635D]"
+                ? "bg-surface-raised border-accent text-accent font-semibold"
+                : "bg-surface border-border-subtle text-text-muted"
             }`}
           >
-            <strong className="block text-xs">Diner / Consumer</strong>
-            <span className="text-[10px] text-[#868A85]">Save kitchens & view audits</span>
+            <strong className="block text-xs text-text-base">Diner / Consumer</strong>
+            <span className="text-[10px] text-text-muted">Save kitchens &amp; view audits</span>
           </button>
 
           <button
@@ -89,94 +89,99 @@ function RegisterForm() {
             onClick={() => setRole("RESTAURANT_OWNER")}
             className={`p-2.5 rounded-lg border text-left transition-all ${
               role === "RESTAURANT_OWNER"
-                ? "bg-[#F0F6F2] border-[#143D2B] text-[#143D2B] font-semibold"
-                : "bg-white border-[#D0D0C3] text-[#5E635D]"
+                ? "bg-surface-raised border-accent text-accent font-semibold"
+                : "bg-surface border-border-subtle text-text-muted"
             }`}
           >
-            <strong className="block text-xs">Restaurant Operator</strong>
-            <span className="text-[10px] text-[#868A85]">Upload docs & get verified</span>
+            <strong className="block text-xs text-text-base">Restaurant Operator</strong>
+            <span className="text-[10px] text-text-muted">Upload docs &amp; get verified</span>
           </button>
         </div>
       </div>
 
       <div>
-        <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+        <label htmlFor="reg-name" className="block font-semibold tracking-wider text-text-muted mb-1">
           Full Name
         </label>
         <div className="relative">
-          <User className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+          <User className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="reg-name"
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Ananya Deshmukh"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
       </div>
 
       <div>
-        <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+        <label htmlFor="reg-email" className="block font-semibold tracking-wider text-text-muted mb-1">
           Email Address
         </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+          <Mail className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="reg-email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="ananya@example.com"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
       </div>
 
       <div>
-        <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+        <label htmlFor="reg-password" className="block font-semibold tracking-wider text-text-muted mb-1">
           Password (min. 6 characters)
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+          <Lock className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="reg-password"
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••••••"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+          <label htmlFor="reg-phone" className="block font-semibold tracking-wider text-text-muted mb-1">
             Mobile Number
           </label>
           <div className="relative">
-            <Smartphone className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+            <Smartphone className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
             <input
+              id="reg-phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+91 98..."
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+          <label htmlFor="reg-city" className="block font-semibold tracking-wider text-text-muted mb-1">
             Primary City
           </label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+            <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
             <select
+              id="reg-city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B] bg-[#FBFBF9]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
             >
               <option value="New Delhi">New Delhi</option>
               <option value="Bengaluru">Bengaluru</option>
@@ -192,7 +197,7 @@ function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2.5 rounded-lg bg-[#143D2B] text-white text-xs font-semibold hover:bg-[#1F593F] transition-all flex items-center justify-center gap-2 pt-3"
+        className="w-full py-2.5 rounded-lg bg-accent text-bg text-xs font-semibold hover:bg-accent-strong transition-all flex items-center justify-center gap-2 pt-3"
       >
         <span>{loading ? "Creating Account..." : "Complete Registration"}</span>
         <ArrowRight className="w-3.5 h-3.5" />
@@ -201,7 +206,7 @@ function RegisterForm() {
       <div className="text-center pt-2">
         <Link
           href="/login"
-          className="text-xs text-[#5E635D] hover:text-[#143D2B] underline"
+          className="text-xs text-text-muted hover:text-accent underline"
         >
           Already registered? Sign in here
         </Link>
@@ -214,18 +219,18 @@ export default function RegisterPage() {
   return (
     <div className="max-w-md mx-auto px-4 py-16 sm:py-24 space-y-8">
       <div className="text-center space-y-2">
-        <div className="w-10 h-10 rounded-xl bg-[#143D2B] text-white flex items-center justify-center font-bold mx-auto shadow-subtle">
-          <ShieldCheck className="w-6 h-6 text-emerald-300" />
+        <div className="w-10 h-10 rounded-xl bg-surface-raised text-accent flex items-center justify-center font-bold mx-auto shadow-subtle border border-border-subtle">
+          <ShieldCheck className="w-6 h-6 text-accent" />
         </div>
-        <h1 className="text-2xl font-serif font-bold text-[#161815] tracking-tight">
+        <h1 className="text-text-base">
           Create Your KitchenProof Account
         </h1>
-        <p className="text-xs text-[#5E635D]">
+        <p className="text-xs text-text-muted max-w-prose mx-auto">
           Join the food safety transparency ecosystem
         </p>
       </div>
 
-      <Suspense fallback={<div className="p-8 text-center text-xs text-[#868A85]">Loading registration form...</div>}>
+      <Suspense fallback={<div className="p-8 text-center text-xs text-text-muted">Loading registration form...</div>}>
         <RegisterForm />
       </Suspense>
     </div>

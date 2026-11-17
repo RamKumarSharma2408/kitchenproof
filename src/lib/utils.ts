@@ -41,36 +41,36 @@ export function getScoreBadge(score: number): {
   if (score >= 85) {
     return {
       label: "Exemplary Hygiene",
-      bg: "bg-brand-50",
-      text: "text-brand-800",
-      border: "border-brand-200",
-      dot: "bg-brand-600",
+      bg: "bg-accent/15",
+      text: "text-accent",
+      border: "border-accent/40",
+      dot: "bg-accent",
     };
   }
   if (score >= 70) {
     return {
       label: "Standard Compliant",
-      bg: "bg-amber-50",
-      text: "text-amber-800",
-      border: "border-amber-200",
-      dot: "bg-amber-600",
+      bg: "bg-warning/15",
+      text: "text-warning",
+      border: "border-warning/40",
+      dot: "bg-warning",
     };
   }
   if (score > 0) {
     return {
       label: "Requires Improvement",
-      bg: "bg-crimson-50",
-      text: "text-crimson-800",
-      border: "border-crimson-200",
-      dot: "bg-crimson-600",
+      bg: "bg-danger/15",
+      text: "text-danger",
+      border: "border-danger/40",
+      dot: "bg-danger",
     };
   }
   return {
     label: "Awaiting Assessment",
-    bg: "bg-charcoal-100",
-    text: "text-charcoal-700",
-    border: "border-charcoal-200",
-    dot: "bg-charcoal-400",
+    bg: "bg-surface-raised",
+    text: "text-text-muted",
+    border: "border-border-strong",
+    dot: "bg-text-muted",
   };
 }
 
@@ -86,66 +86,66 @@ export function getVerificationStatusBadge(status: string): {
     case "INDEPENDENTLY_VERIFIED":
       return {
         label: "Independently Verified",
-        bg: "bg-[#F0F6F2]",
-        text: "text-[#143D2B]",
-        border: "border-[#B8D4C2]",
-        dot: "bg-emerald-600",
+        bg: "bg-accent/15",
+        text: "text-accent",
+        border: "border-accent/40",
+        dot: "bg-accent",
       };
     case "UPLOADED_UNVERIFIED":
     case "UPLOADED":
       return {
         label: "Uploaded (Awaiting Audit)",
-        bg: "bg-sky-50",
-        text: "text-sky-900",
-        border: "border-sky-300",
-        dot: "bg-sky-600",
+        bg: "bg-info/15",
+        text: "text-info",
+        border: "border-info/40",
+        dot: "bg-info",
       };
     case "PENDING_REVIEW":
     case "PENDING_VERIFICATION":
       return {
         label: "Pending Verification",
-        bg: "bg-amber-50",
-        text: "text-amber-900",
-        border: "border-amber-300",
-        dot: "bg-amber-600",
+        bg: "bg-warning/15",
+        text: "text-warning",
+        border: "border-warning/40",
+        dot: "bg-warning",
       };
     case "EXPIRED":
     case "EXPIRED_EVIDENCE":
       return {
         label: "Expired Evidence",
-        bg: "bg-orange-50",
-        text: "text-orange-900",
-        border: "border-orange-300",
-        dot: "bg-orange-600",
+        bg: "bg-danger/15",
+        text: "text-danger",
+        border: "border-danger/40",
+        dot: "bg-danger",
       };
     case "MISSING_INFO":
     case "MISSING_EVIDENCE":
       return {
         label: "Missing Information",
-        bg: "bg-rose-50",
-        text: "text-rose-900",
-        border: "border-rose-300",
-        dot: "bg-rose-500",
+        bg: "bg-danger/15",
+        text: "text-danger",
+        border: "border-danger/40",
+        dot: "bg-danger",
       };
     case "REJECTED":
     case "REJECTED_EVIDENCE":
     case "ACTION_REQUIRED":
       return {
         label: "Action Required / Rejected",
-        bg: "bg-red-50",
-        text: "text-red-900",
-        border: "border-red-300",
-        dot: "bg-red-600",
+        bg: "bg-danger/15",
+        text: "text-danger",
+        border: "border-danger/40",
+        dot: "bg-danger",
       };
     case "SELF_REPORTED":
     case "UNVERIFIED":
     default:
       return {
         label: "Self-Reported Claim",
-        bg: "bg-[#F5F5F0]",
-        text: "text-[#5E635D]",
-        border: "border-[#D0D0C3]",
-        dot: "bg-gray-400",
+        bg: "bg-surface-raised",
+        text: "text-text-muted",
+        border: "border-border-strong",
+        dot: "bg-text-muted",
       };
   }
 }

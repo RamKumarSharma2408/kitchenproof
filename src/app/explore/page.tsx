@@ -107,33 +107,37 @@ export default function ExplorePage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Page Header */}
       <div>
-        <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B]">
+        <span className="text-xs font-semibold tracking-wider text-accent">
           National Restaurant Directory
         </span>
-        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#161815] mt-1 tracking-tight">
+        <h1 className="text-text-base mt-1">
           Explore Kitchen Safety Audits
         </h1>
-        <p className="text-xs sm:text-sm text-[#5E635D] mt-2 max-w-2xl">
+        <p className="text-xs sm:text-sm text-text-muted mt-2 max-w-prose">
           Search cloud kitchens, dine-in restaurants, and bakeries. Inspect verified hygiene evidence, statutory FSSAI compliance, cold-chain monitoring, and sanitation logs before placing your order.
         </p>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white p-5 rounded-xl border border-[#E7E7DE] shadow-subtle space-y-4">
+      <div className="bg-surface p-5 rounded-xl border border-border-subtle shadow-subtle space-y-4">
         {/* Search input */}
         <div className="relative">
-          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-[#868A85]" />
+          <label htmlFor="explore-search" className="sr-only">
+            Search kitchens by name, cuisine, or locality
+          </label>
+          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="explore-search"
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by restaurant name, cuisine (Biryani, South Indian), or locality (Indiranagar, Connaught Place)..."
-            className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[#D0D0C3] focus:border-[#143D2B] text-sm text-[#161815] placeholder:text-[#868A85]"
+            className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-border-strong focus:border-accent text-sm text-text-base bg-surface-raised placeholder:text-text-muted focus:ring-1 focus:ring-accent focus:outline-none"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-3 text-[#868A85] hover:text-[#161815]"
+              className="absolute right-3 top-3 text-text-muted hover:text-text-base"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />
@@ -145,13 +149,14 @@ export default function ExplorePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
           {/* City filter */}
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+            <label htmlFor="filter-city" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               City
             </label>
             <select
+              id="filter-city"
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] bg-[#FBFBF9]"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               {cities.map((c) => (
                 <option key={c} value={c}>
@@ -163,13 +168,14 @@ export default function ExplorePage() {
 
           {/* Verification status filter */}
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+            <label htmlFor="filter-status" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               Verification Status
             </label>
             <select
+              id="filter-status"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] bg-[#FBFBF9]"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               <option value="ALL">All Statuses (7 States)</option>
               <option value="VERIFIED">Independently Verified Only</option>
@@ -183,13 +189,14 @@ export default function ExplorePage() {
 
           {/* Safety score filter */}
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+            <label htmlFor="filter-min-score" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               Min. Safety Score
             </label>
             <select
+              id="filter-min-score"
               value={minScore}
               onChange={(e) => setMinScore(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] bg-[#FBFBF9]"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               <option value="">Any Score</option>
               <option value="85">85+ Exemplary Hygiene</option>
@@ -200,13 +207,14 @@ export default function ExplorePage() {
 
           {/* Sort By */}
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+            <label htmlFor="filter-sort" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               Sort By
             </label>
             <select
+              id="filter-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] bg-[#FBFBF9]"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               <option value="safetyScore">Safety Score (Highest First)</option>
               <option value="foodRating">Food App Rating (Highest First)</option>
@@ -218,13 +226,13 @@ export default function ExplorePage() {
       </div>
 
       {/* Results Header */}
-      <div className="flex items-center justify-between text-xs text-[#5E635D]">
+      <div className="flex items-center justify-between text-xs text-text-muted" aria-live="polite" aria-atomic="true">
         <span>
           Showing <strong>{restaurants.length}</strong> kitchen safety profiles
           {selectedCity !== "ALL" ? ` in ${selectedCity}` : " across India"}
         </span>
         {loading && (
-          <span className="flex items-center gap-1.5 text-[#143D2B] font-medium">
+          <span className="flex items-center gap-1.5 text-accent font-medium">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             Updating profiles...
           </span>
@@ -233,21 +241,24 @@ export default function ExplorePage() {
 
       {/* Grid of Restaurant Cards */}
       {restaurants.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-          ))}
+        <div>
+          <h2 className="sr-only">Directory Listings</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {restaurants.map((restaurant) => (
+              <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E7E7DE] p-12 text-center max-w-md mx-auto space-y-3">
-          <ShieldCheck className="w-10 h-10 text-[#868A85] mx-auto" />
-          <h3 className="font-serif font-bold text-lg text-[#161815]">No matching kitchens found</h3>
-          <p className="text-xs text-[#5E635D]">
+        <div className="bg-surface rounded-xl border border-border-subtle p-12 text-center max-w-md mx-auto space-y-3">
+          <ShieldCheck className="w-10 h-10 text-text-muted mx-auto" />
+          <h2 className="text-text-base">No matching kitchens found</h2>
+          <p className="text-xs text-text-muted max-w-prose mx-auto">
             Try adjusting your search terms, selecting &quot;All Cities&quot;, or lowering the minimum safety score filter.
           </p>
           <button
             onClick={handleResetFilters}
-            className="text-xs font-semibold text-[#143D2B] underline pt-2"
+            className="text-xs font-semibold text-accent underline pt-2"
           >
             Reset all filters
           </button>

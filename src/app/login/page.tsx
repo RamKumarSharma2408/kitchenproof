@@ -1,21 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ShieldCheck, Lock, Mail, ArrowRight, UserCheck, ChevronDown, ChevronUp } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "";
+  const queryError = searchParams.get("error");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    queryError === "unauthorized"
+      ? "Please sign in to access this dashboard."
+      : queryError === "forbidden"
+      ? "You do not have permission to view that resource."
+      : queryError === "session_expired"
+      ? "Your session has expired. Please sign in again."
+      : ""
+  );
   const [loading, setLoading] = useState(false);
-  const [demoRoleLoading, setDemoRoleLoading] = useState<string | null>(null);
-  const [showDemoPortals, setShowDemoPortals] = useState(false);
 
-  const handleLogin = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError("");
 
@@ -32,72 +42,30 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect based on role
-      switch (data.user.role) {
-        case "ADMIN":
-          router.push("/dashboard/admin");
-          break;
-        case "INSPECTOR":
-          router.push("/dashboard/inspector");
-          break;
-        case "RESTAURANT_OWNER":
-          router.push("/dashboard/owner");
-          break;
-        case "CONSUMER":
-        default:
-          router.push("/dashboard/consumer");
-          break;
+      if (callbackUrl && callbackUrl.startsWith("/dashboard")) {
+        router.push(callbackUrl);
+      } else {
+        switch (data.user.role) {
+          case "ADMIN":
+            router.push("/dashboard/admin");
+            break;
+          case "INSPECTOR":
+            router.push("/dashboard/inspector");
+            break;
+          case "RESTAURANT_OWNER":
+            router.push("/dashboard/owner");
+            break;
+          case "CONSUMER":
+          default:
+            router.push("/dashboard/consumer");
+            break;
+        }
       }
       router.refresh();
     } catch {
-      setError("An unexpected network error occurred.");
+      setError("An unexpected network error occurred. Please try again.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleInstantDemoLogin = async (demoEmail: string, roleKey: string) => {
-    setDemoRoleLoading(roleKey);
-    setError("");
-
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: demoEmail,
-          password: "KitchenProof@123",
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setEmail(demoEmail);
-        setPassword("KitchenProof@123");
-        setError(data.error || "Authentication issue");
-        return;
-      }
-
-      switch (data.user.role) {
-        case "ADMIN":
-          router.push("/dashboard/admin");
-          break;
-        case "INSPECTOR":
-          router.push("/dashboard/inspector");
-          break;
-        case "RESTAURANT_OWNER":
-          router.push("/dashboard/owner");
-          break;
-        case "CONSUMER":
-        default:
-          router.push("/dashboard/consumer");
-          break;
-      }
-      router.refresh();
-    } catch {
-      setError("Failed to sign in to evaluation portal.");
-    } finally {
-      setDemoRoleLoading(null);
     }
   };
 
@@ -105,55 +73,61 @@ export default function LoginPage() {
     <div className="max-w-md mx-auto px-4 py-16 sm:py-24 space-y-8">
       {/* Brand icon & title */}
       <div className="text-center space-y-2">
-        <div className="w-10 h-10 rounded-xl bg-[#143D2B] text-white flex items-center justify-center font-bold mx-auto shadow-subtle">
-          <ShieldCheck className="w-6 h-6 text-emerald-300" />
+        <div className="w-10 h-10 rounded-xl bg-surface-raised text-accent flex items-center justify-center font-bold mx-auto shadow-subtle border border-border-subtle">
+          <ShieldCheck className="w-6 h-6 text-accent" />
         </div>
-        <h1 className="text-2xl font-serif font-bold text-[#161815] tracking-tight">
+        <h1 className="text-text-base">
           Sign In to KitchenProof
         </h1>
-        <p className="text-xs text-[#5E635D]">
-          Access your transparent food safety portal & dashboard
+        <p className="text-xs text-text-muted max-w-prose mx-auto">
+          Access your transparent food safety portal &amp; dashboard
         </p>
       </div>
 
       {/* Main Login Form */}
-      <form onSubmit={handleLogin} className="bg-white p-6 sm:p-8 rounded-xl border border-[#E7E7DE] shadow-subtle space-y-4">
+      <form
+        onSubmit={handleLogin}
+        className="bg-surface p-6 sm:p-8 rounded-xl border border-border-subtle shadow-subtle space-y-4"
+      >
         {error && (
-          <div className="p-3 bg-red-50 text-red-800 text-xs rounded border border-red-200">
-            {error}
+          <div className="p-3 bg-surface-raised text-danger text-xs rounded border border-danger/30 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-danger" />
+            <span>{error}</span>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+          <label className="block text-xs font-semibold tracking-wider text-text-muted mb-1">
             Email Address
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+            <Mail className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
             <input
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] placeholder:text-[#868A85] focus:border-[#143D2B]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-xs text-text-base placeholder:text-text-muted focus:border-accent focus:outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-[#5E635D] mb-1">
+          <label className="block text-xs font-semibold tracking-wider text-text-muted mb-1">
             Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-2.5 w-4 h-4 text-[#868A85]" />
+            <Lock className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#D0D0C3] text-xs text-[#161815] placeholder:text-[#868A85] focus:border-[#143D2B]"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-xs text-text-base placeholder:text-text-muted focus:border-accent focus:outline-none"
             />
           </div>
         </div>
@@ -161,7 +135,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 bg-[#143D2B] text-white rounded-lg text-xs font-semibold hover:bg-[#0D281C] transition-colors flex items-center justify-center gap-1.5"
+          className="w-full py-2.5 bg-accent text-bg rounded-lg text-xs font-semibold hover:bg-accent-strong transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
         >
           <span>{loading ? "Authenticating..." : "Sign In to Portal"}</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -169,100 +143,20 @@ export default function LoginPage() {
       </form>
 
       {/* Footer link to register */}
-      <div className="text-center text-xs text-[#5E635D]">
+      <div className="text-center text-xs text-text-muted">
         <span>Are you a food business operator? </span>
-        <Link href="/register" className="font-semibold text-[#143D2B] underline">
+        <Link href="/register" className="font-semibold text-accent underline">
           Register your kitchen
         </Link>
       </div>
-
-      {/* Developer & Auditor Simulation Sandbox */}
-      <div className="bg-[#F5F5F0] p-4 rounded-xl border border-dashed border-[#D0D0C3] space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#143D2B] flex items-center gap-1.5">
-            <UserCheck className="w-3.5 h-3.5" />
-            <span>Auditor & Evaluation Simulation Sandbox</span>
-          </span>
-          <button
-            type="button"
-            onClick={() => setShowDemoPortals(!showDemoPortals)}
-            className="text-[#868A85] hover:text-[#161815] text-[10px] flex items-center gap-0.5"
-          >
-            {showDemoPortals ? (
-              <>
-                <span>Collapse</span>
-                <ChevronUp className="w-3 h-3" />
-              </>
-            ) : (
-              <>
-                <span>Expand</span>
-                <ChevronDown className="w-3 h-3" />
-              </>
-            )}
-          </button>
-        </div>
-
-        {showDemoPortals && (
-          <>
-            <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("rahul.consumer@example.com", "consumer")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Consumer Role</strong>
-                  {demoRoleLoading === "consumer" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Rahul Verma (Watchlist & Reports)</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("priya.owner@example.com", "owner")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Kitchen Owner Role</strong>
-                  {demoRoleLoading === "owner" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Priya Sundaram (Doc Vault & QR)</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("dr.anil.inspector@example.com", "inspector")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Certified Inspector</strong>
-                  {demoRoleLoading === "inspector" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Dr. Anil Sharma (Audit Scoring)</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!!demoRoleLoading}
-                onClick={() => handleInstantDemoLogin("admin@kitchenproof.in", "admin")}
-                className="p-2.5 bg-white rounded-lg border border-[#D0D0C3] hover:border-[#143D2B] text-left hover:bg-[#F0F6F2] transition-colors disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between">
-                  <strong className="text-[#161815]">Platform Admin</strong>
-                  {demoRoleLoading === "admin" && <span className="text-[10px] text-emerald-700 font-bold">...</span>}
-                </div>
-                <span className="text-[#868A85] text-[10px] block mt-0.5">Rajeshwar S. (Governance & Logs)</span>
-              </button>
-            </div>
-            <p className="text-[10px] text-[#868A85] text-center pt-1">
-              Test mode only: simulated accounts for exploring role interfaces without manual credential entry.
-            </p>
-          </>
-        )}
-      </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="max-w-md mx-auto py-16 text-center text-text-muted text-xs">Loading sign-in portal...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

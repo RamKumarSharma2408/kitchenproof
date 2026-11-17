@@ -2,38 +2,131 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   DESIGN TOKENS — KitchenProof dark-organic theme
+   Single source of truth. All components use these vars.
+   ============================================================ */
 :root {
-  --background: #FBFBF9;
-  --foreground: #161815;
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --bg:             #0E1512;
+  --surface:        #151F1A;
+  --surface-raised: #1C2923;
+
+  /* Text */
+  --text:           #EAF1EC;
+  --text-muted:     #A9B8AF;
+
+  /* Accent */
+  --accent:         #7CC49A;
+  --accent-strong:  #5AAF7E;
+
+  /* Status */
+  --warning:        #E3B04B;
+  --danger:         #EC8A7B;
+  --info:           #76B9C4;
+
+  /* Borders */
+  --border-subtle:  rgba(122,180,140,0.12);
+  --border-strong:  rgba(124,196,154,0.55);
+
+  /* Focus */
+  --focus-ring:     #7CC49A;
+
+  /* Surfaces for scrollbars, selections */
+  --scrollbar-track: #151F1A;
+  --scrollbar-thumb: #2D4039;
+  --selection-bg:    rgba(124,196,154,0.25);
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+html {
+  color-scheme: dark;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-source-sans), "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #F5F5F0;
-}
-::-webkit-scrollbar-thumb {
-  background: #D0D0C3;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #B7B9B6;
-}
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3A5248; }
 
-/* Accessible focus ring */
+/* ── Selection ────────────────────────────────────────────── */
+::selection { background: var(--selection-bg); color: var(--text); }
+
+/* ── Focus ring (accessible, light on dark) ───────────────── */
 *:focus-visible {
-  outline: 2px solid #143D2B;
-  outline-offset: 2px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
+/* ── Type scale ───────────────────────────────────────────── */
+h1 { font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(2rem, 5vw + 1rem, 3.75rem); line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(1.5rem, 3vw + 0.5rem, 2.5rem); line-height: 1.2;  font-weight: 600; letter-spacing: -0.015em; }
+h3 { font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(1.125rem, 2vw + 0.25rem, 1.75rem); line-height: 1.25; font-weight: 600; }
+h4 { font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(1rem, 1.5vw + 0.25rem, 1.25rem); line-height: 1.3; font-weight: 500; }
+h5, h6 { font-family: var(--font-source-sans), system-ui, sans-serif; font-weight: 600; }
+
+p { line-height: 1.65; max-width: 70ch; }
+small { font-size: 0.875rem; }
+
+/* ── Skip link ────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: #0E1512;
+  font-weight: 700;
+  border-radius: 0 0 4px 4px;
+  text-decoration: none;
+  transition: top 0.1s;
+}
+.skip-link:focus { top: 0; }
+
+/* ── Grain texture overlay (very subtle) ──────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  z-index: 0;
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Print stylesheet ─────────────────────────────────────── */
+@media print {
+  :root { color-scheme: light; }
+  body {
+    background: #fff;
+    color: #111;
+    font-size: 11pt;
+  }
+  header, footer, nav, .no-print { display: none !important; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #555; }
+  h1, h2, h3, h4 { color: #111; page-break-after: avoid; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #ccc; padding: 4pt 6pt; }
+}

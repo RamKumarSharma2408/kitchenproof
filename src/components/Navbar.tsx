@@ -57,9 +57,9 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FBFBF9]/90 backdrop-blur-md border-b border-[#E7E7DE]">
+    <header className="sticky top-0 z-50 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
       {/* Platform Transparency Banner */}
-      <div className="bg-[#143D2B] text-[#DCE9E0] px-4 py-1.5 text-xs text-center font-medium tracking-wide flex items-center justify-center gap-2">
+      <div className="bg-[var(--surface-raised)] text-[var(--text)] px-4 py-1.5 text-xs text-center font-medium tracking-wide flex items-center justify-center gap-2">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
         <span>Independent Kitchen Safety Transparency • Evidence-Based Hygiene Intelligence</span>
       </div>
@@ -67,15 +67,20 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-lg bg-[#143D2B] text-white flex items-center justify-center font-bold shadow-subtle group-hover:bg-[#1F593F] transition-colors">
-            <ShieldCheck className="w-5 h-5 text-emerald-300" />
+          <div className="w-9 h-9 rounded-lg bg-[var(--surface-raised)] border border-[var(--border-strong)] text-accent flex items-center justify-center font-bold shadow-subtle group-hover:border-accent transition-colors">
+            <svg viewBox="0 0 32 32" className="w-5 h-5 text-accent" fill="none" aria-hidden="true">
+              <path d="M11 7.5L15 11.5L23 3" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 21.5C5 13 10 9.5 16 9.5C22 9.5 27 13 27 21.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M3.5 21.5H28.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <circle cx="16" cy="15.5" r="1.25" fill="currentColor"/>
+            </svg>
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight text-[#161815] font-serif leading-none">
+            <span className="text-lg font-bold tracking-tight text-[var(--text)] font-serif leading-none group-hover:text-accent transition-colors">
               KitchenProof
             </span>
-            <span className="text-[10px] text-[#5E635D] tracking-wider uppercase font-sans mt-0.5 font-medium">
-              Food Safety & Hygiene Transparency
+            <span className="text-[10px] text-[var(--text-muted)] tracking-wider uppercase font-sans mt-0.5 font-medium">
+              Food Safety &amp; Hygiene Transparency
             </span>
           </div>
         </Link>
@@ -88,8 +93,8 @@ export default function Navbar() {
               href={link.href}
               className={`text-sm font-medium transition-colors ${
                 pathname === link.href
-                  ? "text-[#143D2B] font-semibold border-b-2 border-[#143D2B] py-5"
-                  : "text-[#444943] hover:text-[#143D2B]"
+                  ? "text-accent font-semibold border-b-2 border-accent py-5"
+                  : "text-[var(--text-muted)] hover:text-accent"
               }`}
             >
               {link.label}
@@ -103,7 +108,7 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href={getDashboardLink()}
-                className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-md bg-[#F0F6F2] text-[#143D2B] hover:bg-[#DCE9E0] border border-[#B8D4C2] transition-colors"
+                className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-md bg-surface-raised text-accent hover:bg-[var(--surface-raised)] border border-border-strong transition-colors"
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
                 <span>
@@ -116,7 +121,7 @@ export default function Navbar() {
               <button
                 onClick={handleLogout}
                 title="Log out"
-                className="p-2 text-[#5E635D] hover:text-[#B91C1C] rounded-md hover:bg-gray-100 transition-colors"
+                className="p-2 text-[var(--text-muted)] hover:text-danger rounded-md hover:bg-surface-raised transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -125,13 +130,13 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="text-xs font-medium text-[#323631] hover:text-[#143D2B] px-3 py-2 transition-colors"
+                className="text-xs font-medium text-[var(--text-muted)] hover:text-accent px-3 py-2 transition-colors"
               >
                 Log In
               </Link>
               <Link
                 href="/explore"
-                className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-md bg-[#143D2B] text-white hover:bg-[#1F593F] shadow-subtle transition-all"
+                className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-md bg-accent text-bg hover:bg-accent-strong shadow-subtle transition-all"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span>Explore Kitchens</span>
@@ -143,7 +148,7 @@ export default function Navbar() {
         {/* Mobile menu trigger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-[#444943] hover:text-[#143D2B]"
+          className="md:hidden p-2 text-[var(--text-muted)] hover:text-accent"
           aria-label="Toggle mobile menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -152,7 +157,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#E7E7DE] bg-[#FBFBF9] px-4 pt-3 pb-6 space-y-3">
+        <div className="md:hidden border-t border-[var(--border-subtle)] bg-[var(--bg)] px-4 pt-3 pb-6 space-y-3">
           <div className="flex flex-col space-y-2">
             {navLinks.map((link) => (
               <Link
@@ -161,8 +166,8 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
                   pathname === link.href
-                    ? "bg-[#F0F6F2] text-[#143D2B] font-semibold"
-                    : "text-[#323631] hover:bg-[#F5F5F0]"
+                    ? "bg-surface-raised text-accent font-semibold"
+                    : "text-[var(--text-muted)] hover:bg-surface-raised"
                 }`}
               >
                 {link.label}
@@ -170,13 +175,13 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="pt-3 border-t border-[#E7E7DE] flex flex-col gap-2">
+          <div className="pt-3 border-t border-[var(--border-subtle)] flex flex-col gap-2">
             {user ? (
               <>
                 <Link
                   href={getDashboardLink()}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-md bg-[#143D2B] text-white text-sm font-semibold"
+                  className="w-full text-center py-2.5 rounded-md bg-accent text-bg text-sm font-semibold"
                 >
                   Dashboard ({user.name.split(" ")[0]})
                 </Link>
@@ -185,7 +190,7 @@ export default function Navbar() {
                     setMobileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full text-center py-2 text-sm text-[#B91C1C] hover:bg-red-50 rounded-md"
+                  className="w-full text-center py-2 text-sm text-danger hover:bg-surface-raised rounded-md"
                 >
                   Sign Out
                 </button>
@@ -195,53 +200,19 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-md border border-[#D0D0C3] text-sm font-medium text-[#161815]"
+                  className="w-full text-center py-2.5 rounded-md border border-border-strong text-sm font-medium text-[var(--text)]"
                 >
                   Log In
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-md bg-[#143D2B] text-white text-sm font-semibold"
+                  className="w-full text-center py-2.5 rounded-md bg-accent text-bg text-sm font-semibold"
                 >
                   Get Started
                 </Link>
 
-                <div className="pt-2 border-t border-[#E7E7DE] space-y-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#868A85] px-1">
-                    Demo Portals
-                  </span>
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <Link
-                      href="/dashboard/consumer"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
-                    >
-                      Consumer
-                    </Link>
-                    <Link
-                      href="/dashboard/owner"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
-                    >
-                      Kitchen Owner
-                    </Link>
-                    <Link
-                      href="/dashboard/inspector"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
-                    >
-                      Auditor
-                    </Link>
-                    <Link
-                      href="/dashboard/admin"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-xs text-center py-2 bg-[#F0F6F2] text-[#143D2B] rounded font-medium hover:bg-[#DCE9E0]"
-                    >
-                      Governance
-                    </Link>
-                  </div>
-                </div>
+
               </>
             )}
           </div>
@@ -250,4 +221,3 @@ export default function Navbar() {
     </header>
   );
 }
-
