@@ -66,7 +66,14 @@ export default function SafetyScoreBadge({
             </span>
             <span className="font-semibold text-[var(--text)]">{dataConfidence}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-surface-raised overflow-hidden">
+          <div
+            className="w-full h-2 rounded-full bg-surface-raised overflow-hidden"
+            role="progressbar"
+            aria-label="Evidence Completeness Progress"
+            aria-valuenow={dataConfidence}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
             <div
               className={`h-full rounded-full transition-all duration-500 ${
                 dataConfidence >= 80

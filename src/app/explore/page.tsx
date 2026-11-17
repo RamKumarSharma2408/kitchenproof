@@ -122,13 +122,17 @@ export default function ExplorePage() {
       <div className="bg-surface p-5 rounded-xl border border-border-subtle shadow-subtle space-y-4">
         {/* Search input */}
         <div className="relative">
-          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-text-muted" />
+          <label htmlFor="explore-search" className="sr-only">
+            Search kitchens by name, cuisine, or locality
+          </label>
+          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="explore-search"
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by restaurant name, cuisine (Biryani, South Indian), or locality (Indiranagar, Connaught Place)..."
-            className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-border-subtle focus:border-accent text-sm text-text-base bg-surface-raised placeholder:text-text-muted"
+            className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-border-strong focus:border-accent text-sm text-text-base bg-surface-raised placeholder:text-text-muted focus:ring-1 focus:ring-accent focus:outline-none"
           />
           {search && (
             <button
@@ -145,13 +149,14 @@ export default function ExplorePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
           {/* City filter */}
           <div>
-            <label className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
+            <label htmlFor="filter-city" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               City
             </label>
             <select
+              id="filter-city"
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border-subtle text-xs text-text-base bg-surface-raised"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               {cities.map((c) => (
                 <option key={c} value={c}>
@@ -163,13 +168,14 @@ export default function ExplorePage() {
 
           {/* Verification status filter */}
           <div>
-            <label className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
+            <label htmlFor="filter-status" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               Verification Status
             </label>
             <select
+              id="filter-status"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border-subtle text-xs text-text-base bg-surface-raised"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               <option value="ALL">All Statuses (7 States)</option>
               <option value="VERIFIED">Independently Verified Only</option>
@@ -183,13 +189,14 @@ export default function ExplorePage() {
 
           {/* Safety score filter */}
           <div>
-            <label className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
+            <label htmlFor="filter-min-score" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               Min. Safety Score
             </label>
             <select
+              id="filter-min-score"
               value={minScore}
               onChange={(e) => setMinScore(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border-subtle text-xs text-text-base bg-surface-raised"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               <option value="">Any Score</option>
               <option value="85">85+ Exemplary Hygiene</option>
@@ -200,13 +207,14 @@ export default function ExplorePage() {
 
           {/* Sort By */}
           <div>
-            <label className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
+            <label htmlFor="filter-sort" className="block text-[11px] font-semibold tracking-wider text-text-muted mb-1">
               Sort By
             </label>
             <select
+              id="filter-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border-subtle text-xs text-text-base bg-surface-raised"
+              className="w-full px-3 py-2 rounded-lg border border-border-strong text-xs text-text-base bg-surface-raised focus:border-accent focus:outline-none"
             >
               <option value="safetyScore">Safety Score (Highest First)</option>
               <option value="foodRating">Food App Rating (Highest First)</option>
@@ -218,7 +226,7 @@ export default function ExplorePage() {
       </div>
 
       {/* Results Header */}
-      <div className="flex items-center justify-between text-xs text-text-muted">
+      <div className="flex items-center justify-between text-xs text-text-muted" aria-live="polite" aria-atomic="true">
         <span>
           Showing <strong>{restaurants.length}</strong> kitchen safety profiles
           {selectedCity !== "ALL" ? ` in ${selectedCity}` : " across India"}

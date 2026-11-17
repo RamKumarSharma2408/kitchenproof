@@ -100,83 +100,88 @@ function RegisterForm() {
       </div>
 
       <div>
-        <label className="block font-semibold tracking-wider text-text-muted mb-1">
+        <label htmlFor="reg-name" className="block font-semibold tracking-wider text-text-muted mb-1">
           Full Name
         </label>
         <div className="relative">
-          <User className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
+          <User className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="reg-name"
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Ananya Deshmukh"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-text-base placeholder:text-text-muted focus:border-accent focus:outline-none"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
       </div>
 
       <div>
-        <label className="block font-semibold tracking-wider text-text-muted mb-1">
+        <label htmlFor="reg-email" className="block font-semibold tracking-wider text-text-muted mb-1">
           Email Address
         </label>
         <div className="relative">
-          <Mail className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
+          <Mail className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="reg-email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="ananya@example.com"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-text-base placeholder:text-text-muted focus:border-accent focus:outline-none"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
       </div>
 
       <div>
-        <label className="block font-semibold tracking-wider text-text-muted mb-1">
+        <label htmlFor="reg-password" className="block font-semibold tracking-wider text-text-muted mb-1">
           Password (min. 6 characters)
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
+          <Lock className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
           <input
+            id="reg-password"
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••••••"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-text-base placeholder:text-text-muted focus:border-accent focus:outline-none"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block font-semibold tracking-wider text-text-muted mb-1">
+          <label htmlFor="reg-phone" className="block font-semibold tracking-wider text-text-muted mb-1">
             Mobile Number
           </label>
           <div className="relative">
-            <Smartphone className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
+            <Smartphone className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
             <input
+              id="reg-phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+91 98..."
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-text-base placeholder:text-text-muted focus:border-accent focus:outline-none"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base placeholder:text-text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-semibold tracking-wider text-text-muted mb-1">
+          <label htmlFor="reg-city" className="block font-semibold tracking-wider text-text-muted mb-1">
             Primary City
           </label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
+            <MapPin className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" aria-hidden="true" />
             <select
+              id="reg-city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-subtle bg-surface-raised text-text-base focus:border-accent"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border-strong bg-surface-raised text-text-base focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none"
             >
               <option value="New Delhi">New Delhi</option>
               <option value="Bengaluru">Bengaluru</option>

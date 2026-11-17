@@ -136,14 +136,15 @@ function DisputeFormContent() {
 
           {/* Kitchen Selection */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-text-base">
+            <label htmlFor="dispute-kitchen" className="block text-xs font-semibold text-text-base">
               Select Kitchen Establishment *
             </label>
             <select
+              id="dispute-kitchen"
               value={selectedRestaurantId}
               onChange={(e) => setSelectedRestaurantId(e.target.value)}
               required
-              className="w-full px-3 py-2 text-xs rounded-lg border border-border-subtle focus:outline-none focus:border-accent bg-surface-raised text-text-base"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-border-strong focus:outline-none focus:border-accent bg-surface-raised text-text-base focus:ring-1 focus:ring-accent"
             >
               {DEMO_RESTAURANTS.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -155,14 +156,15 @@ function DisputeFormContent() {
 
           {/* Dispute Category */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-text-base">
+            <label htmlFor="dispute-category" className="block text-xs font-semibold text-text-base">
               Dispute / Rectification Category *
             </label>
             <select
+              id="dispute-category"
               value={disputeType}
               onChange={(e) => setDisputeType(e.target.value)}
               required
-              className="w-full px-3 py-2 text-xs rounded-lg border border-border-subtle focus:outline-none focus:border-accent bg-surface-raised text-text-base"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-border-strong focus:outline-none focus:border-accent bg-surface-raised text-text-base focus:ring-1 focus:ring-accent"
             >
               <option value="WRONG_EXPIRY_DATE">
                 Expired Certificate Renewed / Date Discrepancy
@@ -184,32 +186,34 @@ function DisputeFormContent() {
 
           {/* Subject */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-text-base">
+            <label htmlFor="dispute-subject" className="block text-xs font-semibold text-text-base">
               Subject Summary *
             </label>
             <input
+              id="dispute-subject"
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g. Renewed Rentokil monthly pest control service log for November 2026"
               required
-              className="w-full px-3 py-2 text-xs rounded-lg border border-border-subtle focus:outline-none focus:border-accent bg-surface-raised text-text-base"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-border-strong focus:outline-none focus:border-accent bg-surface-raised text-text-base focus:ring-1 focus:ring-accent"
             />
           </div>
 
           {/* Detailed Explanation */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-text-base">
+            <label htmlFor="dispute-explanation" className="block text-xs font-semibold text-text-base">
               Detailed Explanation &amp; Corrective Actions Undertaken *
             </label>
             <textarea
+              id="dispute-explanation"
               rows={5}
               value={explanation}
               onChange={(e) => setExplanation(e.target.value)}
               placeholder="Please explain the factual discrepancy or details of the newly executed corrective action..."
               required
               minLength={20}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-border-subtle focus:outline-none focus:border-accent bg-surface-raised text-text-base"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-border-strong focus:outline-none focus:border-accent bg-surface-raised text-text-base focus:ring-1 focus:ring-accent"
             />
             <span className="text-[11px] text-text-muted block">
               Minimum 20 characters. Include certificate serial numbers or applicator names where applicable.
@@ -218,15 +222,16 @@ function DisputeFormContent() {
 
           {/* Supporting Document Reference */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-text-base">
+            <label htmlFor="dispute-doc" className="block text-xs font-semibold text-text-base">
               Supporting Document Reference / Filename
             </label>
             <input
+              id="dispute-doc"
               type="text"
               value={supportingDocName}
               onChange={(e) => setSupportingDocName(e.target.value)}
               placeholder="e.g. rentokil_service_nov2026_signed.pdf"
-              className="w-full px-3 py-2 text-xs rounded-lg border border-border-subtle focus:outline-none focus:border-accent bg-surface-raised text-text-base"
+              className="w-full px-3 py-2 text-xs rounded-lg border border-border-strong focus:outline-none focus:border-accent bg-surface-raised text-text-base focus:ring-1 focus:ring-accent"
             />
           </div>
 
