@@ -241,10 +241,13 @@ export default function ExplorePage() {
 
       {/* Grid of Restaurant Cards */}
       {restaurants.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-          ))}
+        <div>
+          <h2 className="sr-only">Directory Listings</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {restaurants.map((restaurant) => (
+              <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="bg-surface rounded-xl border border-border-subtle p-12 text-center max-w-md mx-auto space-y-3">

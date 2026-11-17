@@ -31,9 +31,9 @@ export default function Footer() {
 
           {/* Navigation Links */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--text)] mb-4">
               Explore &amp; Understand
-            </h4>
+            </h2>
             <ul className="space-y-2.5 text-xs text-[var(--text-muted)]">
               <li>
                 <Link href="/explore" className="hover:text-white transition-colors">
@@ -60,9 +60,9 @@ export default function Footer() {
 
           {/* For Restaurants & Industry */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--text)] mb-4">
               For Food Businesses
-            </h4>
+            </h2>
             <ul className="space-y-2.5 text-xs text-[var(--text-muted)]">
               <li>
                 <Link href="/for-restaurants" className="hover:text-white transition-colors">
@@ -89,9 +89,9 @@ export default function Footer() {
 
           {/* Trust, Legal & Statutory Disclaimer */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--text)] mb-4">
               Regulatory Disclosures
-            </h4>
+            </h2>
             <div className="space-y-3 text-[11px] text-[var(--text-muted)] leading-relaxed">
               <p>
                 KitchenProof is an independent consumer transparency ecosystem. We are neither a government agency nor a substitute for statutory inspections conducted by the Food Safety and Standards Authority of India (FSSAI) or state health authorities.
