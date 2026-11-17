@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 36" fill="none" aria-label="KitchenProof">
+  <!-- Pot Lid Mark -->
+  <g transform="translate(2, 2)">
+    <rect width="32" height="32" rx="8" fill="#1C2923" stroke="rgba(122,180,140,0.25)" stroke-width="1"/>
+    <path d="M11 7.5L15 11.5L23 3" stroke="#7CC49A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 21.5C5 13 10 9.5 16 9.5C22 9.5 27 13 27 21.5" stroke="#7CC49A" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M3.5 21.5H28.5" stroke="#7CC49A" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="16" cy="15.5" r="1.25" fill="#7CC49A"/>
+  </g>
+  <!-- Wordmark Text -->
+  <text x="44" y="20" font-family="'Fraunces', Georgia, serif" font-size="17" font-weight="700" fill="#EAF1EC" letter-spacing="-0.02em">
+    Kitchen<tspan fill="#7CC49A">Proof</tspan>
+  </text>
+  <text x="44" y="29" font-family="'Source Sans 3', system-ui, sans-serif" font-size="7" font-weight="600" fill="#A9B8AF" letter-spacing="0.12em">
+    EVIDENCE-BASED HYGIENE
+  </text>
+</svg>

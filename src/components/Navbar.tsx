@@ -66,12 +66,17 @@ export default function Navbar() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-lg bg-[var(--surface-raised)] text-white flex items-center justify-center font-bold shadow-subtle group-hover:bg-accent/20 transition-colors">
-            <ShieldCheck className="w-5 h-5 text-emerald-300" />
+        <Link href="/" className="flex items-center gap-2.5 group" aria-label="KitchenProof">
+          <div className="w-9 h-9 rounded-lg bg-[var(--surface-raised)] border border-[var(--border-strong)] text-accent flex items-center justify-center font-bold shadow-subtle group-hover:border-accent transition-colors">
+            <svg viewBox="0 0 32 32" className="w-5 h-5 text-accent" fill="none" aria-hidden="true">
+              <path d="M11 7.5L15 11.5L23 3" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 21.5C5 13 10 9.5 16 9.5C22 9.5 27 13 27 21.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M3.5 21.5H28.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+              <circle cx="16" cy="15.5" r="1.25" fill="currentColor"/>
+            </svg>
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight text-[var(--text)] font-serif leading-none">
+            <span className="text-lg font-bold tracking-tight text-[var(--text)] font-serif leading-none group-hover:text-accent transition-colors">
               KitchenProof
             </span>
             <span className="text-[10px] text-[var(--text-muted)] tracking-wider uppercase font-sans mt-0.5 font-medium">

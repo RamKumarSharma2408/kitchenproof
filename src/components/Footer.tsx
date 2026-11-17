@@ -8,14 +8,19 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand info */}
           <div className="space-y-4 md:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold">
-                <ShieldCheck className="w-5 h-5 text-emerald-200" />
+            <Link href="/" className="inline-flex items-center gap-2 group" aria-label="KitchenProof Homepage">
+              <div className="w-8 h-8 rounded-lg bg-[var(--surface-raised)] border border-[var(--border-strong)] text-accent flex items-center justify-center font-bold group-hover:border-accent transition-colors">
+                <svg viewBox="0 0 32 32" className="w-4 h-4 text-accent" fill="none" aria-hidden="true">
+                  <path d="M11 7.5L15 11.5L23 3" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M5 21.5C5 13 10 9.5 16 9.5C22 9.5 27 13 27 21.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                  <path d="M3.5 21.5H28.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                  <circle cx="16" cy="15.5" r="1.25" fill="currentColor"/>
+                </svg>
               </div>
-              <span className="text-xl font-bold font-serif text-white tracking-tight">
+              <span className="text-xl font-bold font-serif text-[var(--text)] tracking-tight group-hover:text-accent transition-colors">
                 KitchenProof
               </span>
-            </div>
+            </Link>
             <p className="text-xs text-[var(--text-muted)] leading-relaxed">
               Know What&apos;s Cooking Behind Your Order. Bridging the information asymmetry in food delivery through independent, evidence-backed kitchen safety transparency.
             </p>
