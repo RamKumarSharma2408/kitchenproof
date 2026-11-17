@@ -25,7 +25,7 @@ export default function SafetyScoreBadge({
           {score > 0 ? `${score}/100` : "Unrated"}
         </span>
         {showLabel && (
-          <span className="text-[11px] text-[#5E635D] font-medium hidden sm:inline">
+          <span className="text-[11px] text-[var(--text-muted)] font-medium hidden sm:inline">
             {badge.label}
           </span>
         )}
@@ -35,9 +35,9 @@ export default function SafetyScoreBadge({
 
   if (size === "lg") {
     return (
-      <div className="bg-white border border-[#E7E7DE] rounded-xl p-6 shadow-subtle flex flex-col items-center sm:items-start">
+      <div className="bg-surface border border-border-subtle rounded-xl p-6 shadow-subtle flex flex-col items-center sm:items-start">
         <div className="flex items-center justify-between w-full mb-3">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#5E635D]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
             Kitchen Safety Index
           </span>
           <span
@@ -49,36 +49,36 @@ export default function SafetyScoreBadge({
         </div>
 
         <div className="flex items-baseline gap-2 mb-2">
-          <span className="text-5xl font-black tracking-tight text-[#161815] font-serif">
+          <span className="text-5xl font-black tracking-tight text-[var(--text)] font-serif">
             {score > 0 ? score : "—"}
           </span>
-          <span className="text-lg font-medium text-[#5E635D]">/100</span>
+          <span className="text-lg font-medium text-[var(--text-muted)]">/100</span>
         </div>
 
         {/* Data Confidence Indicator */}
-        <div className="w-full mt-4 pt-4 border-t border-[#E7E7DE]">
-          <div className="flex items-center justify-between text-xs text-[#5E635D] mb-1.5">
+        <div className="w-full mt-4 pt-4 border-t border-[var(--border-subtle)]">
+          <div className="flex items-center justify-between text-xs text-[var(--text-muted)] mb-1.5">
             <span className="font-medium flex items-center gap-1">
               Evidence Completeness
               <span title="Measures what proportion of statutory safety documentation has been verified" className="cursor-help">
-                <Info className="w-3.5 h-3.5 text-[#868A85]" />
+                <Info className="w-3.5 h-3.5 text-[var(--text-muted)]" />
               </span>
             </span>
-            <span className="font-semibold text-[#161815]">{dataConfidence}%</span>
+            <span className="font-semibold text-[var(--text)]">{dataConfidence}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#EFEFE9] overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-surface-raised overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
                 dataConfidence >= 80
-                  ? "bg-[#143D2B]"
+                  ? "bg-accent"
                   : dataConfidence >= 50
-                  ? "bg-[#D97706]"
-                  : "bg-[#DC2626]"
+                  ? "bg-warning"
+                  : "bg-danger"
               }`}
               style={{ width: `${Math.max(5, dataConfidence)}%` }}
             />
           </div>
-          <p className="text-[11px] text-[#868A85] mt-1.5">
+          <p className="text-[11px] text-[var(--text-muted)] mt-1.5">
             {dataConfidence >= 90
               ? "All critical regulatory & audit records independently verified."
               : dataConfidence >= 60
@@ -99,9 +99,8 @@ export default function SafetyScoreBadge({
         <span>{score > 0 ? `${score}/100` : "Unrated"}</span>
       </div>
       {showLabel && (
-        <span className="text-xs text-[#5E635D] font-medium">{badge.label}</span>
+        <span className="text-xs text-[var(--text-muted)] font-medium">{badge.label}</span>
       )}
     </div>
   );
 }
-

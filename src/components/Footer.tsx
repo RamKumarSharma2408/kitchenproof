@@ -3,7 +3,7 @@ import { ShieldCheck, HeartHandshake, FileText, ExternalLink } from "lucide-reac
 
 export default function Footer() {
   return (
-    <footer className="bg-[#143D2B] text-[#DCE9E0] border-t border-[#0F2E1D]">
+    <footer className="bg-[var(--surface)] text-[var(--text)] border-t border-[var(--border-subtle)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand info */}
@@ -16,10 +16,10 @@ export default function Footer() {
                 KitchenProof
               </span>
             </div>
-            <p className="text-xs text-[#B8D4C2] leading-relaxed">
+            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
               Know What&apos;s Cooking Behind Your Order. Bridging the information asymmetry in food delivery through independent, evidence-backed kitchen safety transparency.
             </p>
-            <div className="pt-2 text-[11px] text-[#8CBA9D]">
+            <div className="pt-2 text-[11px] text-[var(--text-muted)]">
               Operated under India-first food safety transparency protocols adhering to FSSAI Schedule 4 hygiene benchmarks.
             </div>
           </div>
@@ -27,9 +27,9 @@ export default function Footer() {
           {/* Navigation Links */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
-              Explore & Understand
+              Explore &amp; Understand
             </h4>
-            <ul className="space-y-2.5 text-xs text-[#B8D4C2]">
+            <ul className="space-y-2.5 text-xs text-[var(--text-muted)]">
               <li>
                 <Link href="/explore" className="hover:text-white transition-colors">
                   Browse Kitchen Profiles
@@ -37,7 +37,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/how-it-works" className="hover:text-white transition-colors">
-                  Scoring Engine & Weights
+                  Scoring Engine &amp; Weights
                 </Link>
               </li>
               <li>
@@ -58,7 +58,7 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
               For Food Businesses
             </h4>
-            <ul className="space-y-2.5 text-xs text-[#B8D4C2]">
+            <ul className="space-y-2.5 text-xs text-[var(--text-muted)]">
               <li>
                 <Link href="/for-restaurants" className="hover:text-white transition-colors">
                   Claim Your Kitchen Profile
@@ -66,17 +66,17 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/disputes" className="hover:text-white transition-colors">
-                  Operator Dispute & Rectification Portal
+                  Operator Dispute &amp; Rectification Portal
                 </Link>
               </li>
               <li>
                 <Link href="/for-restaurants#compliance-toolkit" className="hover:text-white transition-colors">
-                  Hygiene Checklist & Toolkit
+                  Hygiene Checklist &amp; Toolkit
                 </Link>
               </li>
               <li>
                 <Link href="/login" className="hover:text-white transition-colors">
-                  Operator Login & Verification
+                  Operator Login &amp; Verification
                 </Link>
               </li>
             </ul>
@@ -87,7 +87,7 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
               Regulatory Disclosures
             </h4>
-            <div className="space-y-3 text-[11px] text-[#8CBA9D] leading-relaxed">
+            <div className="space-y-3 text-[11px] text-[var(--text-muted)] leading-relaxed">
               <p>
                 KitchenProof is an independent consumer transparency ecosystem. We are neither a government agency nor a substitute for statutory inspections conducted by the Food Safety and Standards Authority of India (FSSAI) or state health authorities.
               </p>
@@ -99,14 +99,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-[#1E4F32] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#8CBA9D]">
+        <div className="mt-12 pt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--text-muted)]">
           <p>© {new Date().getFullYear()} KitchenProof Technologies India. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/terms" className="hover:text-white transition-colors">
               Terms of Transparency
             </Link>
             <Link href="/privacy" className="hover:text-white transition-colors">
-              Data Privacy & Redaction
+              Data Privacy &amp; Redaction
             </Link>
             <Link href="/methodology" className="hover:text-white transition-colors">
               Methodology v2.0
@@ -120,4 +120,3 @@ export default function Footer() {
     </footer>
   );
 }
-
