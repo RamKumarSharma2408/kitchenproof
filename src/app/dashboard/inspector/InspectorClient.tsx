@@ -184,13 +184,13 @@ export default function InspectorClient({
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="flex border-b border-[#E7E7DE] space-x-6 text-xs font-semibold">
+      <div className="flex border-b border-border-subtle space-x-6 text-xs font-semibold">
         <button
           onClick={() => setActiveTab("RECORD")}
           className={`pb-3 flex items-center gap-1.5 transition-colors border-b-2 ${
             activeTab === "RECORD"
-              ? "border-[#143D2B] text-[#143D2B] font-bold"
-              : "border-transparent text-[#5E635D] hover:text-[#161815]"
+              ? "border-accent text-accent font-bold"
+              : "border-transparent text-text-muted hover:text-text-base"
           }`}
         >
           <ClipboardCheck className="w-4 h-4" />
@@ -201,8 +201,8 @@ export default function InspectorClient({
           onClick={() => setActiveTab("DOCS")}
           className={`pb-3 flex items-center gap-1.5 transition-colors border-b-2 ${
             activeTab === "DOCS"
-              ? "border-[#143D2B] text-[#143D2B] font-bold"
-              : "border-transparent text-[#5E635D] hover:text-[#161815]"
+              ? "border-accent text-accent font-bold"
+              : "border-transparent text-text-muted hover:text-text-base"
           }`}
         >
           <FileCheck2 className="w-4 h-4" />
@@ -213,8 +213,8 @@ export default function InspectorClient({
           onClick={() => setActiveTab("REQUESTS")}
           className={`pb-3 flex items-center gap-1.5 transition-colors border-b-2 ${
             activeTab === "REQUESTS"
-              ? "border-[#143D2B] text-[#143D2B] font-bold"
-              : "border-transparent text-[#5E635D] hover:text-[#161815]"
+              ? "border-accent text-accent font-bold"
+              : "border-transparent text-text-muted hover:text-text-base"
           }`}
         >
           <AlertTriangle className="w-4 h-4" />
@@ -225,8 +225,8 @@ export default function InspectorClient({
           onClick={() => setActiveTab("HISTORY")}
           className={`pb-3 flex items-center gap-1.5 transition-colors border-b-2 ${
             activeTab === "HISTORY"
-              ? "border-[#143D2B] text-[#143D2B] font-bold"
-              : "border-transparent text-[#5E635D] hover:text-[#161815]"
+              ? "border-accent text-accent font-bold"
+              : "border-transparent text-text-muted hover:text-text-base"
           }`}
         >
           <History className="w-4 h-4" />

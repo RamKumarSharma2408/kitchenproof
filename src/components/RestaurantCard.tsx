@@ -48,7 +48,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
           {/* Demonstration Notice Badge */}
           {restaurant.isDemoData && (
-            <div className="absolute top-2.5 left-2.5 bg-black/75 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide">
+            <div className="absolute top-2.5 left-2.5 bg-surface/90 border border-border-strong text-text-muted px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide backdrop-blur-sm">
               DEMO DATA
             </div>
           )}
@@ -75,8 +75,8 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
             {/* Consumer App Food Rating */}
             {restaurant.foodRating && (
-              <span className="bg-surface/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-semibold text-[var(--text)] flex items-center gap-1 shadow-sm">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-500" />
+              <span className="bg-surface/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-semibold text-[var(--text)] flex items-center gap-1 shadow-sm border border-border-subtle">
+                <Star className="w-3 h-3 fill-warning text-warning" />
                 <span>{restaurant.foodRating.toFixed(1)}</span>
                 <span className="text-[10px] text-[var(--text-muted)]">Food Rating</span>
               </span>
