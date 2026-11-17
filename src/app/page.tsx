@@ -38,54 +38,54 @@ export default async function HomePage() {
   return (
     <div className="space-y-24 pb-24">
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 border-b border-[#E7E7DE] bg-gradient-to-b from-[#F5F5F0]/60 via-[#FBFBF9] to-[#FBFBF9]">
+      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 border-b border-border-subtle bg-gradient-to-b from-surface/60 via-bg to-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Column: Editorial Headline & Copy */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0F6F2] border border-[#B8D4C2] text-xs font-semibold text-[#143D2B]">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#143D2B]" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-raised border border-border-subtle text-xs font-semibold text-accent">
+                <ShieldCheck className="w-3.5 h-3.5 text-accent" />
                 <span>Independent Kitchen Safety Transparency Platform</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#161815] tracking-tight leading-[1.12]">
+              <h1 className="text-text-base">
                 Your food has a rating. <br />
-                <span className="text-[#143D2B] italic">But does your kitchen?</span>
+                <span className="text-accent italic">But does your kitchen?</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-[#5E635D] leading-relaxed max-w-2xl font-normal">
+              <p className="text-base sm:text-lg text-text-muted leading-relaxed max-w-prose font-normal">
                 Food delivery apps show you appetizing photos, delivery minutes, and taste reviews. But consumers have had no convenient way to verify cold-chain logs, pest control contracts, water potability tests, or official hygiene audit results.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Link
                   href="/explore"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#143D2B] text-white font-semibold text-sm hover:bg-[#1F593F] shadow-card transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-accent text-bg font-semibold text-sm hover:bg-accent-strong shadow-card transition-all"
                 >
                   <Search className="w-4 h-4" />
                   <span>Explore Verified Kitchens</span>
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-white border border-[#D0D0C3] text-[#161815] font-semibold text-sm hover:bg-[#F5F5F0] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-surface border border-border-subtle text-text-base font-semibold text-sm hover:bg-surface-raised transition-colors"
                 >
                   <span>How the Score Works</span>
-                  <ArrowRight className="w-4 h-4 text-[#5E635D]" />
+                  <ArrowRight className="w-4 h-4 text-text-muted" />
                 </Link>
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-6 border-t border-[#E7E7DE] grid grid-cols-3 gap-4 text-xs text-[#5E635D]">
+              <div className="pt-6 border-t border-border-subtle grid grid-cols-3 gap-4 text-xs text-text-muted">
                 <div>
-                  <strong className="block text-lg font-serif font-black text-[#161815]">Audited</strong>
+                  <strong className="block text-lg font-serif font-black text-text-base">Audited</strong>
                   <span>Laboratory & Test Records</span>
                 </div>
                 <div>
-                  <strong className="block text-lg font-serif font-black text-[#161815]">Codex &amp; FSSAI</strong>
+                  <strong className="block text-lg font-serif font-black text-text-base">Codex &amp; FSSAI</strong>
                   <span>Hygiene Benchmarks</span>
                 </div>
                 <div>
-                  <strong className="block text-lg font-serif font-black text-[#161815]">Zero</strong>
+                  <strong className="block text-lg font-serif font-black text-text-base">Zero</strong>
                   <span>Commercial Influence</span>
                 </div>
               </div>
@@ -93,61 +93,61 @@ export default async function HomePage() {
 
             {/* Right Column: Hero Visual Card (Comparison Graphic) */}
             <div className="lg:col-span-5">
-              <div className="bg-white rounded-2xl border border-[#E7E7DE] p-6 sm:p-8 shadow-elevated relative">
-                <div className="text-xs font-semibold uppercase tracking-wider text-[#868A85] mb-4">
+              <div className="bg-surface rounded-2xl border border-border-subtle p-6 sm:p-8 shadow-elevated relative">
+                <div className="text-xs font-semibold tracking-wider text-text-muted mb-4">
                   The Delivery App vs. Kitchen Reality
                 </div>
 
                 {/* Simulated Delivery App Card */}
-                <div className="rounded-xl border border-[#E7E7DE] p-4 bg-[#FBFBF9] mb-4 space-y-2 opacity-75">
+                <div className="rounded-xl border border-border-subtle p-4 bg-surface-raised mb-4 space-y-2 opacity-75">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-[#868A85]">Standard Delivery App View</span>
-                    <span className="bg-amber-100 text-amber-900 font-bold px-1.5 py-0.5 rounded text-[11px]">
+                    <span className="font-semibold text-text-muted">Standard Delivery App View</span>
+                    <span className="bg-amber-950/40 text-warning font-bold px-1.5 py-0.5 rounded text-[11px] border border-warning/20">
                       ★ 4.7 (2,100+ Reviews)
                     </span>
                   </div>
-                  <p className="text-xs text-[#5E635D]">
+                  <p className="text-xs text-text-muted max-w-prose">
                     &quot;Delicious butter chicken! Arrived in 24 mins hot and fresh.&quot;
                   </p>
-                  <div className="text-[11px] text-[#B45309] flex items-center gap-1 font-medium pt-1">
+                  <div className="text-[11px] text-warning flex items-center gap-1 font-medium pt-1">
                     <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                     <span>Kitchen location, water test status, and hygiene audit unstated.</span>
                   </div>
                 </div>
 
                 {/* KitchenProof Transparent View */}
-                <div className="rounded-xl border-2 border-[#143D2B] p-4 bg-[#F0F6F2] space-y-3 shadow-subtle">
+                <div className="rounded-xl border-2 border-accent p-4 bg-surface-raised space-y-3 shadow-subtle">
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#143D2B]">
-                      <ShieldCheck className="w-4 h-4 text-[#143D2B]" />
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-accent">
+                      <ShieldCheck className="w-4 h-4 text-accent" />
                       <span>KitchenProof Verified Profile</span>
                     </div>
-                    <span className="bg-[#143D2B] text-white font-bold text-xs px-2 py-0.5 rounded">
+                    <span className="bg-accent text-bg font-bold text-xs px-2 py-0.5 rounded">
                       92/100 Safety Index
                     </span>
                   </div>
 
-                  <div className="space-y-1.5 text-xs text-[#323631]">
-                    <div className="flex items-center justify-between py-1 border-b border-[#DCE9E0]">
-                      <span className="text-[#5E635D]">Potable Water Test (IS 10500)</span>
-                      <span className="font-semibold text-emerald-800">✓ Tested 18 Oct 2026</span>
+                  <div className="space-y-1.5 text-xs text-text-base">
+                    <div className="flex items-center justify-between py-1 border-b border-border-subtle">
+                      <span className="text-text-muted">Potable Water Test (IS 10500)</span>
+                      <span className="font-semibold text-accent">✓ Tested 18 Oct 2026</span>
                     </div>
-                    <div className="flex items-center justify-between py-1 border-b border-[#DCE9E0]">
-                      <span className="text-[#5E635D]">Chiller Temp Control (≤4°C)</span>
-                      <span className="font-semibold text-emerald-800">✓ Digital Log Active</span>
+                    <div className="flex items-center justify-between py-1 border-b border-border-subtle">
+                      <span className="text-text-muted">Chiller Temp Control (≤4°C)</span>
+                      <span className="font-semibold text-accent">✓ Digital Log Active</span>
                     </div>
-                    <div className="flex items-center justify-between py-1 border-b border-[#DCE9E0]">
-                      <span className="text-[#5E635D]">Pest Eradication Contract</span>
-                      <span className="font-semibold text-emerald-800">✓ Rentokil Monthly</span>
+                    <div className="flex items-center justify-between py-1 border-b border-border-subtle">
+                      <span className="text-text-muted">Pest Eradication Contract</span>
+                      <span className="font-semibold text-accent">✓ Rentokil Monthly</span>
                     </div>
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-[#5E635D]">FoSTaC Food Safety Supervisor</span>
-                      <span className="font-semibold text-emerald-800">✓ Certified On-Site</span>
+                      <span className="text-text-muted">FoSTaC Food Safety Supervisor</span>
+                      <span className="font-semibold text-accent">✓ Certified On-Site</span>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[11px] text-[#868A85] text-center mt-4">
+                <p className="text-[11px] text-text-muted text-center mt-4 max-w-prose mx-auto">
                   KitchenProof provides public visibility into what goes on beyond the counter.
                 </p>
               </div>
@@ -159,44 +159,44 @@ export default async function HomePage() {
       {/* 2. THE TRANSPARENCY PROBLEM */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B]">
+          <span className="text-xs font-semibold tracking-wider text-accent">
             The Information Asymmetry
           </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#161815] mt-2 tracking-tight">
+          <h2 className="text-text-base mt-2">
             Why 5-star ratings don&apos;t tell you whether food was prepared safely.
           </h2>
-          <p className="text-sm sm:text-base text-[#5E635D] mt-3 leading-relaxed">
+          <p className="text-sm sm:text-base text-text-muted mt-3 leading-relaxed max-w-prose">
             Consumer taste reviews measure portion sizes, flavor intensity, packaging aesthetics, and delivery speed. They cannot detect bacterial counts in rinse water, temperature dips in meat freezers, or unhygienic handler practices.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-xl border border-[#E7E7DE] shadow-subtle space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-[#FEF3C7] text-[#92400E] flex items-center justify-center font-bold">
-              <Thermometer className="w-5 h-5 text-amber-700" />
+          <div className="bg-surface p-6 rounded-xl border border-border-subtle shadow-subtle space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-surface-raised text-warning flex items-center justify-center font-bold">
+              <Thermometer className="w-5 h-5 text-warning" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#161815]">Cold-Chain & Storage Gaps</h3>
-            <p className="text-xs text-[#5E635D] leading-relaxed">
+            <h3 className="text-text-base">Cold-Chain & Storage Gaps</h3>
+            <p className="text-xs text-text-muted leading-relaxed max-w-prose">
               When raw dairy, poultry, or batters are stored at ambient Indian kitchen temperatures (32°C+) due to power-saving or overloaded refrigeration, foodborne pathogens multiply exponentially without affecting cooked taste.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-[#E7E7DE] shadow-subtle space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F6F2] text-[#143D2B] flex items-center justify-center font-bold">
-              <Sparkles className="w-5 h-5 text-emerald-700" />
+          <div className="bg-surface p-6 rounded-xl border border-border-subtle shadow-subtle space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-surface-raised text-accent flex items-center justify-center font-bold">
+              <Sparkles className="w-5 h-5 text-accent" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#161815]">Water Potability Mystery</h3>
-            <p className="text-xs text-[#5E635D] leading-relaxed">
+            <h3 className="text-text-base">Water Potability Mystery</h3>
+            <p className="text-xs text-text-muted leading-relaxed max-w-prose">
               Restaurants use water for salad washing, dough kneading, and utensil sanitization. Without periodic IS 10500 microbiological testing, consumers have no way of knowing whether the water source is safe.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-[#E7E7DE] shadow-subtle space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-[#FEF2F2] text-[#991B1B] flex items-center justify-center font-bold">
-              <Bug className="w-5 h-5 text-crimson-700" />
+          <div className="bg-surface p-6 rounded-xl border border-border-subtle shadow-subtle space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-surface-raised text-danger flex items-center justify-center font-bold">
+              <Bug className="w-5 h-5 text-danger" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#161815]">Ghost Kitchen Anonymity</h3>
-            <p className="text-xs text-[#5E635D] leading-relaxed">
+            <h3 className="text-text-base">Ghost Kitchen Anonymity</h3>
+            <p className="text-xs text-text-muted leading-relaxed max-w-prose">
               Shared commercial cloud kitchens frequently operate dozens of virtual brands out of a single cramped preparation space. Customers have never seen the kitchen facility where their meal was cooked.
             </p>
           </div>
@@ -204,49 +204,49 @@ export default async function HomePage() {
       </section>
 
       {/* 3. HOW KITCHENPROOF WORKS */}
-      <section className="bg-[#F5F5F0]/80 py-16 sm:py-20 border-y border-[#E7E7DE]">
+      <section className="bg-surface/80 py-16 sm:py-20 border-y border-border-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B]">
+            <span className="text-xs font-semibold tracking-wider text-accent">
               The 4-Step Ecosystem
             </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#161815] mt-2 tracking-tight">
+            <h2 className="text-text-base mt-2">
               How KitchenProof establishes trust.
             </h2>
-            <p className="text-sm text-[#5E635D] mt-2">
+            <p className="text-sm text-text-muted mt-2 max-w-prose mx-auto">
               A transparent verification pipeline connecting diners, food businesses, and accredited safety inspectors.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-3">
-              <span className="text-2xl font-black font-serif text-[#143D2B]">01</span>
-              <h3 className="font-serif font-bold text-base text-[#161815]">Discover</h3>
-              <p className="text-xs text-[#5E635D] leading-relaxed">
+              <span className="text-2xl font-black font-serif text-accent">01</span>
+              <h3 className="text-text-base">Discover</h3>
+              <p className="text-xs text-text-muted leading-relaxed max-w-prose">
                 Search any restaurant or delivery kitchen by name, locality, or cuisine across major Indian metropolitan areas.
               </p>
             </div>
 
             <div className="space-y-3">
-              <span className="text-2xl font-black font-serif text-[#143D2B]">02</span>
-              <h3 className="font-serif font-bold text-base text-[#161815]">Verify</h3>
-              <p className="text-xs text-[#5E635D] leading-relaxed">
+              <span className="text-2xl font-black font-serif text-accent">02</span>
+              <h3 className="text-text-base">Verify</h3>
+              <p className="text-xs text-text-muted leading-relaxed max-w-prose">
                 Inspect physical audit reports, FSSAI display board registrations, and verified supplier certifications uploaded directly by food businesses.
               </p>
             </div>
 
             <div className="space-y-3">
-              <span className="text-2xl font-black font-serif text-[#143D2B]">03</span>
-              <h3 className="font-serif font-bold text-base text-[#161815]">Understand</h3>
-              <p className="text-xs text-[#5E635D] leading-relaxed">
+              <span className="text-2xl font-black font-serif text-accent">03</span>
+              <h3 className="text-text-base">Understand</h3>
+              <p className="text-xs text-text-muted leading-relaxed max-w-prose">
                 View category-by-category score breakdowns: sanitation, temperature controls, food handler medical fitness, and pest management.
               </p>
             </div>
 
             <div className="space-y-3">
-              <span className="text-2xl font-black font-serif text-[#143D2B]">04</span>
-              <h3 className="font-serif font-bold text-base text-[#161815]">Decide</h3>
-              <p className="text-xs text-[#5E635D] leading-relaxed">
+              <span className="text-2xl font-black font-serif text-accent">04</span>
+              <h3 className="text-text-base">Decide</h3>
+              <p className="text-xs text-text-muted leading-relaxed max-w-prose">
                 Order with confidence knowing exactly what standard of hygiene was maintained behind your meal.
               </p>
             </div>
@@ -258,20 +258,20 @@ export default async function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B]">
+            <span className="text-xs font-semibold tracking-wider text-accent">
               Verified Profiles
             </span>
-            <h2 className="text-3xl font-serif font-bold text-[#161815] mt-1 tracking-tight">
+            <h2 className="text-text-base mt-1">
               Featured Kitchen Safety Audits
             </h2>
-            <p className="text-xs text-[#5E635D] mt-1">
+            <p className="text-xs text-text-muted mt-1 max-w-prose">
               Demonstration profiles with independently audited evidence and live scoring.
             </p>
           </div>
 
           <Link
             href="/explore"
-            className="text-xs font-semibold text-[#143D2B] hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
           >
             <span>Explore all kitchens</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -287,73 +287,73 @@ export default async function HomePage() {
 
       {/* 5. EXPLAINABLE SCORING ENGINE PREVIEW */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#143D2B] text-white rounded-2xl p-8 sm:p-12 lg:p-16">
+        <div className="bg-surface border border-border-subtle text-text-base rounded-2xl p-8 sm:p-12 lg:p-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
+              <span className="text-xs font-semibold tracking-wider text-accent">
                 Transparent Methodology v2.0
               </span>
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight">
+              <h2 className="text-text-base">
                 No black-box algorithms. <br />
                 Every point is tied to verified evidence.
               </h2>
-              <p className="text-sm text-[#DCE9E0] leading-relaxed max-w-xl">
+              <p className="text-sm text-text-muted leading-relaxed max-w-prose">
                 KitchenProof does not generate random scores. The 100-point Kitchen Safety Index is mathematically computed across five weighted categories. Unverified claims and expired logs deplete evidence completeness.
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 text-xs">
-                <div className="bg-[#1F593F]/50 border border-emerald-700/60 p-3 rounded-lg">
-                  <strong className="block text-white font-serif text-lg">25%</strong>
-                  <span className="text-[#B8D4C2]">Hygiene & Sanitation</span>
+                <div className="bg-surface-raised border border-border-subtle p-3 rounded-lg">
+                  <strong className="block text-text-base font-serif text-lg">25%</strong>
+                  <span className="text-text-muted">Hygiene & Sanitation</span>
                 </div>
-                <div className="bg-[#1F593F]/50 border border-emerald-700/60 p-3 rounded-lg">
-                  <strong className="block text-white font-serif text-lg">25%</strong>
-                  <span className="text-[#B8D4C2]">Food Handling & PPE</span>
+                <div className="bg-surface-raised border border-border-subtle p-3 rounded-lg">
+                  <strong className="block text-text-base font-serif text-lg">25%</strong>
+                  <span className="text-text-muted">Food Handling & PPE</span>
                 </div>
-                <div className="bg-[#1F593F]/50 border border-emerald-700/60 p-3 rounded-lg">
-                  <strong className="block text-white font-serif text-lg">20%</strong>
-                  <span className="text-[#B8D4C2]">FSSAI Compliance</span>
+                <div className="bg-surface-raised border border-border-subtle p-3 rounded-lg">
+                  <strong className="block text-text-base font-serif text-lg">20%</strong>
+                  <span className="text-text-muted">FSSAI Compliance</span>
                 </div>
-                <div className="bg-[#1F593F]/50 border border-emerald-700/60 p-3 rounded-lg">
-                  <strong className="block text-white font-serif text-lg">15%</strong>
-                  <span className="text-[#B8D4C2]">Pest Management</span>
+                <div className="bg-surface-raised border border-border-subtle p-3 rounded-lg">
+                  <strong className="block text-text-base font-serif text-lg">15%</strong>
+                  <span className="text-text-muted">Pest Management</span>
                 </div>
-                <div className="bg-[#1F593F]/50 border border-emerald-700/60 p-3 rounded-lg">
-                  <strong className="block text-white font-serif text-lg">15%</strong>
-                  <span className="text-[#B8D4C2]">Cold Chain (≤4°C)</span>
+                <div className="bg-surface-raised border border-border-subtle p-3 rounded-lg">
+                  <strong className="block text-text-base font-serif text-lg">15%</strong>
+                  <span className="text-text-muted">Cold Chain (≤4°C)</span>
                 </div>
               </div>
             </div>
 
             <div className="lg:col-span-5 flex justify-center">
-              <div className="bg-[#0F2E1D] border border-emerald-800 rounded-xl p-6 w-full max-w-md space-y-4">
-                <h3 className="text-sm font-semibold text-white border-b border-emerald-900 pb-3 flex items-center justify-between">
+              <div className="bg-surface-raised border border-border-subtle rounded-xl p-6 w-full max-w-md space-y-4">
+                <h3 className="text-text-base border-b border-border-subtle pb-3 flex items-center justify-between">
                   <span>Audit Evidence Standards</span>
-                  <span className="text-[10px] text-emerald-400">IS 10500 Compliant</span>
+                  <span className="text-[10px] text-accent font-sans">IS 10500 Compliant</span>
                 </h3>
 
-                <ul className="space-y-2.5 text-xs text-[#DCE9E0]">
+                <ul className="space-y-2.5 text-xs text-text-muted">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                     <span>NABL-accredited water test required every 6 months.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                     <span>Food handler medical fitness (Form IX) renewed annually.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                     <span>Refrigeration logged twice daily with calibrated probes.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                     <span>Frying oil total polar compounds (TPC) monitored below 25%.</span>
                   </li>
                 </ul>
 
                 <Link
                   href="/methodology"
-                  className="block text-center w-full py-2.5 bg-white text-[#143D2B] rounded-lg text-xs font-semibold hover:bg-[#F0F6F2] transition-colors"
+                  className="block text-center w-full py-2.5 bg-accent text-bg rounded-lg text-xs font-semibold hover:bg-accent-strong transition-colors"
                 >
                   Read Full Scoring Methodology v2.0 →
                 </Link>
@@ -366,38 +366,38 @@ export default async function HomePage() {
       {/* 6. FAQ & STATUTORY DISCLOSURES */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B]">
+          <span className="text-xs font-semibold tracking-wider text-accent">
             Clarity & Transparency
           </span>
-          <h2 className="text-3xl font-serif font-bold text-[#161815] mt-1 tracking-tight">
+          <h2 className="text-text-base mt-1">
             Frequently Asked Questions
           </h2>
         </div>
 
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-[#E7E7DE] p-6 shadow-subtle">
-            <h3 className="font-serif font-bold text-base text-[#161815]">
+          <div className="bg-surface rounded-xl border border-border-subtle p-6 shadow-subtle">
+            <h3 className="text-text-base">
               Is KitchenProof an official government inspection portal?
             </h3>
-            <p className="text-xs text-[#5E635D] mt-2 leading-relaxed">
+            <p className="text-xs text-text-muted mt-2 leading-relaxed max-w-prose">
               No. KitchenProof is an independent consumer transparency platform. Statutory food safety licensing and regulatory enforcement in India are conducted exclusively by the Food Safety and Standards Authority of India (FSSAI) and designated State Food Safety Officers. KitchenProof acts as an open index aggregating verified documentation, third-party accredited audits, and business transparency data for consumer decision-making.
             </p>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#E7E7DE] p-6 shadow-subtle">
-            <h3 className="font-serif font-bold text-base text-[#161815]">
+          <div className="bg-surface rounded-xl border border-border-subtle p-6 shadow-subtle">
+            <h3 className="text-text-base">
               Can restaurants pay KitchenProof to increase their safety score?
             </h3>
-            <p className="text-xs text-[#5E635D] mt-2 leading-relaxed">
+            <p className="text-xs text-text-muted mt-2 leading-relaxed max-w-prose">
               Never. The safety scoring algorithm is deterministic and open-source. Scores are calculated solely from verified evidence (valid FSSAI licenses, NABL lab test results, temperature charts, and inspection findings). Paying for score upgrades is strictly prohibited by our charter.
             </p>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#E7E7DE] p-6 shadow-subtle">
-            <h3 className="font-serif font-bold text-base text-[#161815]">
+          <div className="bg-surface rounded-xl border border-border-subtle p-6 shadow-subtle">
+            <h3 className="text-text-base">
               What happens if a restaurant has not submitted documentation?
             </h3>
-            <p className="text-xs text-[#5E635D] mt-2 leading-relaxed">
+            <p className="text-xs text-text-muted mt-2 leading-relaxed max-w-prose">
               Restaurants with unverified or self-reported profiles are explicitly marked as &quot;Unverified / Self-Reported&quot; with a low Data Confidence rating. Missing documentation is never assumed to be safe, nor does KitchenProof fabricate violation records without evidence.
             </p>
           </div>
@@ -406,4 +406,3 @@ export default async function HomePage() {
     </div>
   );
 }
-

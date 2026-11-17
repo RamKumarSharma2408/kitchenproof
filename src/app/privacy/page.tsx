@@ -10,68 +10,68 @@ export default function PrivacyPage() {
   return (
     <div className="pb-24">
       {/* Header */}
-      <section className="bg-white border-b border-[#E7E7DE] py-12">
+      <section className="bg-surface border-b border-border-subtle py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-[#143D2B] font-semibold hover:underline mb-2"
+            className="inline-flex items-center gap-1.5 text-xs text-accent font-semibold hover:underline mb-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Home</span>
           </Link>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#143D2B] bg-[#F0F6F2] px-2.5 py-1 rounded border border-[#B8D4C2]">
-              Data Protection & Privacy
+            <span className="text-xs font-semibold tracking-wider text-accent bg-surface-raised px-2.5 py-1 rounded border border-border-subtle">
+              Data Protection &amp; Privacy
             </span>
-            <span className="text-xs text-[#868A85]">Digital Personal Data Protection (DPDP) Act Aligned</span>
+            <span className="text-xs text-text-muted">Digital Personal Data Protection (DPDP) Act Aligned</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#161815] tracking-tight">
-            Privacy Policy & Data Redaction Protocol
+          <h1 className="text-text-base">
+            Privacy Policy &amp; Data Redaction Protocol
           </h1>
-          <p className="text-sm text-[#5E635D] leading-relaxed">
+          <p className="text-sm text-text-muted leading-relaxed max-w-prose">
             How KitchenProof protects consumer privacy, safeguards trade secrets, and sanitizes statutory audit documentation before public display.
           </p>
         </div>
       </section>
 
       {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-sm text-[#323631] leading-relaxed">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 text-sm text-text-base leading-relaxed">
         {/* Section 1 */}
-        <section className="space-y-3 bg-white p-6 sm:p-8 rounded-xl border border-[#E7E7DE] shadow-subtle">
-          <div className="flex items-center gap-2 text-[#143D2B] font-semibold text-base">
-            <EyeOff className="w-5 h-5 text-[#143D2B]" />
-            <h2 className="text-xl font-serif font-bold text-[#161815]">
-              1. Document Redaction & PII Protection
+        <section className="space-y-3 bg-surface p-6 sm:p-8 rounded-xl border border-border-subtle shadow-subtle">
+          <div className="flex items-center gap-2 text-accent font-semibold text-base">
+            <EyeOff className="w-5 h-5 text-accent" />
+            <h2 className="text-text-base">
+              1. Document Redaction &amp; PII Protection
             </h2>
           </div>
-          <p>
+          <p className="max-w-prose text-text-muted">
             Public transparency should never compromise individual personal privacy. When kitchen operators submit statutory certificates, our processing engine enforces strict redaction:
           </p>
-          <ul className="list-disc pl-5 space-y-2 text-xs text-[#5E635D]">
+          <ul className="list-disc pl-5 space-y-2 text-xs text-text-muted max-w-prose">
             <li>
-              <strong className="text-[#161815]">Personal Identifiable Information (PII):</strong> Aadhaar numbers, PAN details, bank details, and personal mobile numbers of kitchen staff or individual proprietors are permanently redacted from publicly viewable documents.
+              <strong className="text-text-base">Personal Identifiable Information (PII):</strong> Aadhaar numbers, PAN details, bank details, and personal mobile numbers of kitchen staff or individual proprietors are permanently redacted from publicly viewable documents.
             </li>
             <li>
-              <strong className="text-[#161815]">Commercial Trade Secrets:</strong> Vendor pricing, ingredient formulations, supplier purchase orders, and proprietary recipes are never requested or stored.
+              <strong className="text-text-base">Commercial Trade Secrets:</strong> Vendor pricing, ingredient formulations, supplier purchase orders, and proprietary recipes are never requested or stored.
             </li>
             <li>
-              <strong className="text-[#161815]">Food Safety Supervisor Credentials:</strong> Only the supervisor name and verifiable FoSTaC certificate identification number are published for statutory verification.
+              <strong className="text-text-base">Food Safety Supervisor Credentials:</strong> Only the supervisor name and verifiable FoSTaC certificate identification number are published for statutory verification.
             </li>
           </ul>
         </section>
 
         {/* Section 2 */}
-        <section className="space-y-3 bg-white p-6 sm:p-8 rounded-xl border border-[#E7E7DE] shadow-subtle">
-          <div className="flex items-center gap-2 text-[#143D2B] font-semibold text-base">
-            <Lock className="w-5 h-5 text-[#143D2B]" />
-            <h2 className="text-xl font-serif font-bold text-[#161815]">
+        <section className="space-y-3 bg-surface p-6 sm:p-8 rounded-xl border border-border-subtle shadow-subtle">
+          <div className="flex items-center gap-2 text-accent font-semibold text-base">
+            <Lock className="w-5 h-5 text-accent" />
+            <h2 className="text-text-base">
               2. Consumer Whistleblower Protection
             </h2>
           </div>
-          <p>
+          <p className="max-w-prose text-text-muted">
             When consumers submit hygiene concerns, photo evidence, or foreign-object sighting reports:
           </p>
-          <ul className="list-disc pl-5 space-y-2 text-xs text-[#5E635D]">
+          <ul className="list-disc pl-5 space-y-2 text-xs text-text-muted max-w-prose">
             <li>
               Consumer email addresses and personal identity are encrypted and <strong>never revealed</strong> to restaurant owners or public viewers.
             </li>
@@ -85,11 +85,11 @@ export default function PrivacyPage() {
         </section>
 
         {/* Section 3 */}
-        <section className="space-y-3 bg-white p-6 sm:p-8 rounded-xl border border-[#E7E7DE] shadow-subtle">
-          <h2 className="text-xl font-serif font-bold text-[#161815]">
-            3. Data Retention & Erasure
+        <section className="space-y-3 bg-surface p-6 sm:p-8 rounded-xl border border-border-subtle shadow-subtle">
+          <h2 className="text-text-base">
+            3. Data Retention &amp; Erasure
           </h2>
-          <p className="text-xs text-[#5E635D]">
+          <p className="text-xs text-text-muted max-w-prose">
             Inspection logs and test records are retained for a rolling period of three (3) statutory audit cycles (typically 36 months) to maintain historical compliance records. Upon permanent business cessation or cancellation of FSSAI registration, operators may request archival of their public transparency profile.
           </p>
         </section>
@@ -97,4 +97,3 @@ export default function PrivacyPage() {
     </div>
   );
 }
-

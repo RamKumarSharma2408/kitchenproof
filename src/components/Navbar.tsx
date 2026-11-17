@@ -67,7 +67,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-lg bg-[var(--surface-raised)] text-white flex items-center justify-center font-bold shadow-subtle group-hover:bg-[#1F593F] transition-colors">
+          <div className="w-9 h-9 rounded-lg bg-[var(--surface-raised)] text-white flex items-center justify-center font-bold shadow-subtle group-hover:bg-accent/20 transition-colors">
             <ShieldCheck className="w-5 h-5 text-emerald-300" />
           </div>
           <div className="flex flex-col">
